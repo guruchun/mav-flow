@@ -1,0 +1,632 @@
+# SCU-MG3 Message Specification
+# Extracted from message-spec.xlsx (PPC Tx - SCU Data columns)
+# Packet: Header(1) + Payload(Base+FuelCell+Cells) + CRC8(1) + Tail(1)
+# Byte order: Big-Endian
+# Value encoding: original_value + dmi_offset (decode: (raw - dmi_offset) * scale_factor)
+# scale_factor is derived from Excel "Calculate" column formulas
+
+packet:
+  header: 0xFE
+  tail: 0xFF
+  crc8_polynomial: 0x07
+  payload_size: 480  # Base(100) + FuelCell(150) + Cells(230)
+
+messages:
+  Base:
+    offset: 0
+    size: 100
+    groups:
+      Info:
+        fields:
+          - name: ProductNumber
+            type: uint16
+            byte_size: 2
+            byte_offset: 0
+            dmi_offset: 0
+            scale_factor: 1
+          - name: FwVersion
+            type: uint16
+            byte_size: 2
+            byte_offset: 2
+            dmi_offset: 0
+            scale_factor: 1
+          - name: SystemStatus
+            type: uint16
+            byte_size: 2
+            byte_offset: 4
+            dmi_offset: 0
+            scale_factor: 1
+      ErrorCode:
+        fields:
+          - name: Warning1
+            type: uint32
+            byte_size: 4
+            byte_offset: 6
+            dmi_offset: 0
+            scale_factor: 1
+          - name: Warning2
+            type: uint32
+            byte_size: 4
+            byte_offset: 10
+            dmi_offset: 0
+            scale_factor: 1
+          - name: Danger1
+            type: uint32
+            byte_size: 4
+            byte_offset: 14
+            dmi_offset: 0
+            scale_factor: 1
+          - name: Danger2
+            type: uint32
+            byte_size: 4
+            byte_offset: 18
+            dmi_offset: 0
+            scale_factor: 1
+          - name: Fault1
+            type: uint32
+            byte_size: 4
+            byte_offset: 22
+            dmi_offset: 0
+            scale_factor: 1
+          - name: Fault2
+            type: uint32
+            byte_size: 4
+            byte_offset: 26
+            dmi_offset: 0
+            scale_factor: 1
+      Stack:
+        fields:
+          - name: StackVoltage
+            type: int16
+            byte_size: 2
+            byte_offset: 30
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: StackCurrent
+            type: int16
+            byte_size: 2
+            byte_offset: 32
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: StackPower
+            type: uint16
+            byte_size: 2
+            byte_offset: 34
+            dmi_offset: 0
+            scale_factor: 1
+          - name: CellVoltageMax
+            type: int16
+            byte_size: 2
+            byte_offset: 36
+            dmi_offset: 2500
+            scale_factor: 1
+          - name: CellVoltageAvg
+            type: int16
+            byte_size: 2
+            byte_offset: 38
+            dmi_offset: 2500
+            scale_factor: 1
+          - name: CellVoltageMin
+            type: int16
+            byte_size: 2
+            byte_offset: 40
+            dmi_offset: 2500
+            scale_factor: 1
+          - name: CellVoltageDelta
+            type: int16
+            byte_size: 2
+            byte_offset: 42
+            dmi_offset: 0
+            scale_factor: 1
+          - name: StackTemperatureMax
+            type: int16
+            byte_size: 2
+            byte_offset: 44
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: StackTemperatureAvg
+            type: int16
+            byte_size: 2
+            byte_offset: 46
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: StackTemperatureMin
+            type: int16
+            byte_size: 2
+            byte_offset: 48
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: StackTemperatureDelta
+            type: int16
+            byte_size: 2
+            byte_offset: 50
+            dmi_offset: 0
+            scale_factor: 0.1
+      Battery:
+        fields:
+          - name: BatteryVoltage
+            type: int16
+            byte_size: 2
+            byte_offset: 52
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: BatteryCurrent
+            type: int16
+            byte_size: 2
+            byte_offset: 54
+            dmi_offset: 1500
+            scale_factor: 0.1
+          - name: BatteryPower
+            type: int16
+            byte_size: 2
+            byte_offset: 56
+            dmi_offset: 15000
+            scale_factor: 0.1
+          - name: BatteryTemperatureMax
+            type: int16
+            byte_size: 2
+            byte_offset: 58
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: BatteryTemperatureAvg
+            type: int16
+            byte_size: 2
+            byte_offset: 60
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: BatteryTemperatureMin
+            type: int16
+            byte_size: 2
+            byte_offset: 62
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: BatteryTemperatureDelta
+            type: int16
+            byte_size: 2
+            byte_offset: 64
+            dmi_offset: 0
+            scale_factor: 0.1
+      Pcu:
+        fields:
+          - name: PcuOutputVoltage
+            type: int16
+            byte_size: 2
+            byte_offset: 66
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: PcuOutputCurrent
+            type: int16
+            byte_size: 2
+            byte_offset: 68
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: PcuOutputPower
+            type: uint16
+            byte_size: 2
+            byte_offset: 70
+            dmi_offset: 0
+            scale_factor: 1
+      Fps:
+        fields:
+          - name: H2TankPressure
+            type: int16
+            byte_size: 2
+            byte_offset: 72
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: H2TankPercentGauge
+            type: uint16
+            byte_size: 2
+            byte_offset: 74
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: H2GasLeakage
+            type: int16
+            byte_size: 2
+            byte_offset: 76
+            dmi_offset: 0
+            scale_factor: 1
+      Tms:
+        fields:
+          - name: AmbientTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 78
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: AmbientHumidity
+            type: int16
+            byte_size: 2
+            byte_offset: 80
+            dmi_offset: 0
+            scale_factor: 0.1
+
+  FuelCell:
+    offset: 100
+    size: 150
+    groups:
+      Stack:
+        fields:
+          - name: StackCurrentPcu
+            type: int16
+            byte_size: 2
+            byte_offset: 0
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: StackCurrentScu
+            type: int16
+            byte_size: 2
+            byte_offset: 2
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: StackCurrentDensity
+            type: uint16
+            byte_size: 2
+            byte_offset: 4
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: CellVoltageStandardDeviation
+            type: uint16
+            byte_size: 2
+            byte_offset: 6
+            dmi_offset: 0
+            scale_factor: 0.1
+      Pcu:
+        fields:
+          - name: PcuOutputSlewRate
+            type: uint16
+            byte_size: 2
+            byte_offset: 8
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: PcuEfficiency
+            type: uint16
+            byte_size: 2
+            byte_offset: 10
+            dmi_offset: 0
+            scale_factor: 0.1
+      Fps:
+        fields:
+          - name: H2InletTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 12
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: H2InletPressure
+            type: int16
+            byte_size: 2
+            byte_offset: 14
+            dmi_offset: 50
+            scale_factor: 0.01
+          - name: H2OutletTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 16
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: H2OutletPressure
+            type: int16
+            byte_size: 2
+            byte_offset: 18
+            dmi_offset: 50
+            scale_factor: 0.01
+          - name: WaterSeparatorLevel
+            type: uint8
+            byte_size: 1
+            byte_offset: 20
+            dmi_offset: 0
+            scale_factor: 1
+          - name: H2InletValveOpenState
+            type: uint8
+            byte_size: 1
+            byte_offset: 21
+            dmi_offset: 0
+            scale_factor: 1
+          - name: H2ControlValveSetOpening
+            type: uint16
+            byte_size: 2
+            byte_offset: 22
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: H2ControlValveOpening
+            type: uint16
+            byte_size: 2
+            byte_offset: 24
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: PurgeValveOpenState
+            type: uint8
+            byte_size: 1
+            byte_offset: 26
+            dmi_offset: 0
+            scale_factor: 1
+          - name: DrainValveOpenState
+            type: uint8
+            byte_size: 1
+            byte_offset: 27
+            dmi_offset: 0
+            scale_factor: 1
+      Aps:
+        fields:
+          - name: AirInletTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 28
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: AirInletPressure
+            type: int16
+            byte_size: 2
+            byte_offset: 30
+            dmi_offset: 50
+            scale_factor: 0.01
+          - name: AirInletFlow
+            type: int16
+            byte_size: 2
+            byte_offset: 32
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: AirInletSr
+            type: int16
+            byte_size: 2
+            byte_offset: 34
+            dmi_offset: 0
+            scale_factor: 0.01
+          - name: AirOutletTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 36
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: AirOutletPressure
+            type: int16
+            byte_size: 2
+            byte_offset: 38
+            dmi_offset: 50
+            scale_factor: 0.01
+          - name: AirBlowerTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 40
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: AirBlowerSetDacVoltage
+            type: uint16
+            byte_size: 2
+            byte_offset: 42
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: AirBlowerRpm
+            type: uint16
+            byte_size: 2
+            byte_offset: 44
+            dmi_offset: 0
+            scale_factor: 1
+          - name: AirInletCutoffValveOpening
+            type: uint16
+            byte_size: 2
+            byte_offset: 46
+            dmi_offset: 0
+            scale_factor: 0.1
+      Tms:
+        fields:
+          - name: FanSetSpeed
+            type: uint16
+            byte_size: 2
+            byte_offset: 48
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: FanSpeed
+            type: uint16
+            byte_size: 2
+            byte_offset: 50
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: HeatingPad1SetTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 52
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad1Temperature
+            type: int16
+            byte_size: 2
+            byte_offset: 54
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad1OnState
+            type: uint8
+            byte_size: 1
+            byte_offset: 56
+            dmi_offset: 0
+            scale_factor: 1
+          - name: HeatingPad2SetTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 57
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad2Temperature
+            type: int16
+            byte_size: 2
+            byte_offset: 59
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad2OnState
+            type: uint8
+            byte_size: 1
+            byte_offset: 61
+            dmi_offset: 0
+            scale_factor: 1
+          - name: HeatingPad3SetTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 62
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad3Temperature
+            type: int16
+            byte_size: 2
+            byte_offset: 64
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad3OnState
+            type: uint8
+            byte_size: 1
+            byte_offset: 66
+            dmi_offset: 0
+            scale_factor: 1
+          - name: HeatingPad4SetTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 67
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad4Temperature
+            type: int16
+            byte_size: 2
+            byte_offset: 69
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad4OnState
+            type: uint8
+            byte_size: 1
+            byte_offset: 71
+            dmi_offset: 0
+            scale_factor: 1
+          - name: HeatingPad5SetTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 72
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad5Temperature
+            type: int16
+            byte_size: 2
+            byte_offset: 74
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad5OnState
+            type: uint8
+            byte_size: 1
+            byte_offset: 76
+            dmi_offset: 0
+            scale_factor: 1
+          - name: HeatingPad6SetTemperature
+            type: int16
+            byte_size: 2
+            byte_offset: 77
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad6Temperature
+            type: int16
+            byte_size: 2
+            byte_offset: 79
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: HeatingPad6OnState
+            type: uint8
+            byte_size: 1
+            byte_offset: 81
+            dmi_offset: 0
+            scale_factor: 1
+      Scu:
+        fields:
+          - name: BoardRefVoltageInput
+            type: int16
+            byte_size: 2
+            byte_offset: 82
+            dmi_offset: 0
+            scale_factor: 0.1
+          - name: BoardRefVoltage12V
+            type: int16
+            byte_size: 2
+            byte_offset: 86
+            dmi_offset: 0
+            scale_factor: 0.01
+          - name: BoardRefVoltage5V
+            type: int16
+            byte_size: 2
+            byte_offset: 88
+            dmi_offset: 0
+            scale_factor: 0.01
+          - name: BoardRefVoltage3_3V
+            type: int16
+            byte_size: 2
+            byte_offset: 90
+            dmi_offset: 0
+            scale_factor: 0.01
+          - name: PowerSwitchOnState
+            type: uint8
+            byte_size: 1
+            byte_offset: 102
+            dmi_offset: 0
+            scale_factor: 1
+      Logic:
+        fields:
+          - name: PurgeCpg
+            type: uint16
+            byte_size: 2
+            byte_offset: 103
+            dmi_offset: 400
+            scale_factor: 0.1
+          - name: PurgeCount
+            type: uint32
+            byte_size: 4
+            byte_offset: 105
+            dmi_offset: 0
+            scale_factor: 1
+          - name: DrainWaterProductionRate
+            type: uint16
+            byte_size: 2
+            byte_offset: 109
+            dmi_offset: 0
+            scale_factor: 1
+          - name: DrainCount
+            type: uint32
+            byte_size: 4
+            byte_offset: 111
+            dmi_offset: 0
+            scale_factor: 1
+          - name: StackCurrentLimitRequest
+            type: uint8
+            byte_size: 1
+            byte_offset: 115
+            dmi_offset: 0
+            scale_factor: 1
+          - name: StackCurrentLimitState
+            type: uint8
+            byte_size: 1
+            byte_offset: 116
+            dmi_offset: 0
+            scale_factor: 1
+          - name: StackCurrentLimit
+            type: int16
+            byte_size: 2
+            byte_offset: 117
+            dmi_offset: 0
+            scale_factor: 0.1
+
+  Cells:
+    offset: 250
+    size: 230
+    groups:
+      CellVoltage:
+        fields:
+          - name: StackCellVoltage
+            type: int16_array
+            count: 89
+            byte_size: 178
+            byte_offset: 0
+            dmi_offset: 2500
+            scale_factor: 1
+      Temperature:
+        fields:
+          - name: StackTemperature
+            type: int16_array
+            count: 9
+            byte_size: 18
+            byte_offset: 200
+            dmi_offset: 400
+            scale_factor: 0.1
