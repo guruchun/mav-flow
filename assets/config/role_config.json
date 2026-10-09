@@ -1,0 +1,36 @@
+{
+  "roles": {
+    "gen3": {
+      "name": "GEN3",
+      "description": "DMI Gateway Gen3",
+      "systemId": 1,
+      "componentId": 1,
+      "txMessages": ["HEARTBEAT", "SYS_STATUS", "POWER_STATUS"],
+      "rxMessages": ["HEARTBEAT", "COMMAND_LONG", "PARAM_SET"]
+    },
+    "mc": {
+      "name": "MC",
+      "description": "Mission Computer",
+      "systemId": 1,
+      "componentId": 2,
+      "txMessages": ["HEARTBEAT", "ATTITUDE", "GLOBAL_POSITION_INT"],
+      "rxMessages": ["HEARTBEAT", "COMMAND_LONG", "MISSION_ITEM"]
+    },
+    "fcc": {
+      "name": "FCC",
+      "description": "Flight Control Computer",
+      "systemId": 1,
+      "componentId": 3,
+      "txMessages": ["HEARTBEAT", "ATTITUDE", "VFR_HUD", "GLOBAL_POSITION_INT"],
+      "rxMessages": ["HEARTBEAT", "COMMAND_LONG", "SET_MODE", "MANUAL_CONTROL"]
+    },
+    "gcs": {
+      "name": "GCS",
+      "description": "Ground Control Station",
+      "systemId": 255,
+      "componentId": 0,
+      "txMessages": ["HEARTBEAT", "COMMAND_LONG", "PARAM_REQUEST_READ", "MISSION_REQUEST"],
+      "rxMessages": ["HEARTBEAT", "SYS_STATUS", "ATTITUDE", "GLOBAL_POSITION_INT", "VFR_HUD"]
+    }
+  }
+}

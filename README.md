@@ -1,4 +1,4 @@
-# mg3_comm
+﻿# mav-flow
 
 MG3 I/F의 메시지를 모사(생성)하거나 파싱하여 내용을 보여주는 프로그램
 
@@ -13,7 +13,7 @@ flutter run -d windows
 
 Flutter Windows Desktop 배포 방법
 ```bash
-cd D:\GitlabDmiTool\utils-dart\mg3-comm
+cd D:\{github_dir}\mav-flow
 flutter build windows --release
 ```
 출력경로: build\windows\x64\runner\Release\

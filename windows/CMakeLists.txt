@@ -1,8 +1,8 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(mg3_comm LANGUAGES CXX)
+project(mav_flow LANGUAGES CXX)
 
-set(BINARY_NAME "mg3_comm")
+set(BINARY_NAME "mav-flow")
 
 cmake_policy(VERSION 3.14...3.25)
 

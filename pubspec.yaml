@@ -1,4 +1,4 @@
-name: mg3_comm
+name: mav_flow
 description: MG3 SCU Serial Monitor — real-time packet monitoring tool
 publish_to: 'none'
 version: 1.0.0+1
@@ -9,9 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_libserialport: ^0.4.0
+  flutter_libserialport: ^0.6.0
   yaml: ^3.1.2
   provider: ^6.1.2
+  xml: ^7.1.0
+  file_selector: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -21,4 +23,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/message_spec.yaml
+    - assets/mavlink/
+    - assets/config/

@@ -1,0 +1,2799 @@
+{
+  "version": 2,
+  "dialect": 0,
+  "messages": [
+    {
+      "id": 1,
+      "name": "SYS_STATUS",
+      "description": "Sensor and subsystem status information. Provides a compact representation of sensor/subsystem status and a few other basic statistics.",
+      "fields": [
+        {
+          "name": "onboard_control_sensors_present",
+          "type": "uint32_t",
+          "arrayLength": 0,
+          "description": "Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.",
+          "enumName": "MAV_SYS_STATUS_SENSOR",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "onboard_control_sensors_enabled",
+          "type": "uint32_t",
+          "arrayLength": 0,
+          "description": "Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.",
+          "enumName": "MAV_SYS_STATUS_SENSOR",
+          "offset": 4,
+          "size": 4
+        },
+        {
+          "name": "onboard_control_sensors_health",
+          "type": "uint32_t",
+          "arrayLength": 0,
+          "description": "Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.",
+          "enumName": "MAV_SYS_STATUS_SENSOR",
+          "offset": 8,
+          "size": 4
+        },
+        {
+          "name": "onboard_control_sensors_present_extended",
+          "type": "uint32_t",
+          "arrayLength": 0,
+          "description": "Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.",
+          "enumName": "MAV_SYS_STATUS_SENSOR_EXTENDED",
+          "offset": 12,
+          "size": 4
+        },
+        {
+          "name": "onboard_control_sensors_enabled_extended",
+          "type": "uint32_t",
+          "arrayLength": 0,
+          "description": "Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.",
+          "enumName": "MAV_SYS_STATUS_SENSOR_EXTENDED",
+          "offset": 16,
+          "size": 4
+        },
+        {
+          "name": "onboard_control_sensors_health_extended",
+          "type": "uint32_t",
+          "arrayLength": 0,
+          "description": "Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.",
+          "enumName": "MAV_SYS_STATUS_SENSOR_EXTENDED",
+          "offset": 20,
+          "size": 4
+        },
+        {
+          "name": "load",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Maximum usage in percent of the mainloop time. Values: [0-1000] - should always be below 1000",
+          "units": "d%",
+          "offset": 24,
+          "size": 2
+        },
+        {
+          "name": "voltage_battery",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Battery voltage, UINT16_MAX: Voltage not sent by autopilot. Value is ambiguous on multi-battery systems. BATTERY_STATUS is a recommended alternative.",
+          "units": "mV",
+          "offset": 26,
+          "size": 2
+        },
+        {
+          "name": "current_battery",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Battery current, -1: Current not sent by autopilot. Value may overflow/rollover for very high currents (> 327.67A). Value is ambiguous on multi-battery systems. BATTERY_STATUS is a recommended alternative.",
+          "units": "cA",
+          "offset": 28,
+          "size": 2
+        },
+        {
+          "name": "drop_rate_comm",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Communication drop rate, (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)",
+          "units": "c%",
+          "offset": 30,
+          "size": 2
+        },
+        {
+          "name": "errors_comm",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Communication errors (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)",
+          "offset": 32,
+          "size": 2
+        },
+        {
+          "name": "errors_count1",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Autopilot-specific errors",
+          "offset": 34,
+          "size": 2
+        },
+        {
+          "name": "errors_count2",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Autopilot-specific errors",
+          "offset": 36,
+          "size": 2
+        },
+        {
+          "name": "errors_count3",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Autopilot-specific errors",
+          "offset": 38,
+          "size": 2
+        },
+        {
+          "name": "errors_count4",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Autopilot-specific errors",
+          "offset": 40,
+          "size": 2
+        },
+        {
+          "name": "battery_remaining",
+          "type": "int8_t",
+          "arrayLength": 0,
+          "description": "Battery energy remaining, -1: Battery remaining energy not sent by autopilot. Value is ambiguous on multi-battery systems. BATTERY_STATUS is a recommended alternative.",
+          "units": "%",
+          "offset": 42,
+          "size": 1
+        }
+      ],
+      "crcExtra": 58,
+      "minPayloadLength": 43
+    },
+    {
+      "id": 11,
+      "name": "SET_MODE",
+      "description": "Set the system mode, as defined by enum MAV_MODE_FLAG. There is no target component id as the mode is by definition for the overall aircraft, not only for one component.",
+      "fields": [
+        {
+          "name": "custom_mode",
+          "type": "uint32_t",
+          "arrayLength": 0,
+          "description": "The new autopilot-specific mode. This field can be ignored by an autopilot.",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "target_system",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "The system setting the mode",
+          "offset": 4,
+          "size": 1
+        },
+        {
+          "name": "base_mode",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "The new base mode.",
+          "enumName": "MAV_MODE_FLAG",
+          "offset": 5,
+          "size": 1
+        }
+      ],
+      "crcExtra": 40,
+      "minPayloadLength": 6
+    },
+    {
+      "id": 20,
+      "name": "PARAM_REQUEST_READ",
+      "description": "Request to read the onboard parameter with the param_id string id. Onboard parameters are stored as key[const char*] -> value[float]. This allows to send a parameter to any other component (such as the GCS) without the need of previous knowledge of possible parameter names. Thus the same GCS can store different parameters for different autopilots. See also https://mavlink.io/en/services/parameter.html for a full documentation of QGroundControl and IMU code.",
+      "fields": [
+        {
+          "name": "param_index",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Parameter index. Send -1 to use the param ID field as identifier (else the param id will be ignored)",
+          "offset": 0,
+          "size": 2
+        },
+        {
+          "name": "target_system",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "System ID",
+          "offset": 2,
+          "size": 1
+        },
+        {
+          "name": "target_component",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Component ID",
+          "offset": 3,
+          "size": 1
+        },
+        {
+          "name": "param_id",
+          "type": "char[16]",
+          "arrayLength": 16,
+          "description": "Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string. Encoded as 7-bit ASCII.",
+          "offset": 4,
+          "size": 16
+        }
+      ],
+      "crcExtra": 215,
+      "minPayloadLength": 20
+    },
+    {
+      "id": 23,
+      "name": "PARAM_SET",
+      "description": "Set a parameter value (write new value to permanent storage).\n        The receiving component should acknowledge the new parameter value by broadcasting a PARAM_VALUE message (broadcasting ensures that multiple GCS all have an up-to-date list of all parameters). If the sending GCS did not receive a PARAM_VALUE within its timeout time, it should re-send the PARAM_SET message. The parameter microservice is documented at https://mavlink.io/en/services/parameter.html.",
+      "fields": [
+        {
+          "name": "param_value",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Onboard parameter value",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "target_system",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "System ID",
+          "offset": 4,
+          "size": 1
+        },
+        {
+          "name": "target_component",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Component ID",
+          "offset": 5,
+          "size": 1
+        },
+        {
+          "name": "param_id",
+          "type": "char[16]",
+          "arrayLength": 16,
+          "description": "Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string. Encoded as 7-bit ASCII.",
+          "offset": 6,
+          "size": 16
+        },
+        {
+          "name": "param_type",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Onboard parameter type.",
+          "enumName": "MAV_PARAM_TYPE",
+          "offset": 22,
+          "size": 1
+        }
+      ],
+      "crcExtra": 88,
+      "minPayloadLength": 23
+    },
+    {
+      "id": 30,
+      "name": "ATTITUDE",
+      "description": "The attitude in the aeronautical frame (right-handed, Z-down, Y-right, X-front, ZYX, intrinsic).",
+      "fields": [
+        {
+          "name": "time_boot_ms",
+          "type": "uint32_t",
+          "arrayLength": 0,
+          "description": "Timestamp (time since system boot).",
+          "units": "ms",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "roll",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Roll angle (-pi..+pi)",
+          "units": "rad",
+          "offset": 4,
+          "size": 4
+        },
+        {
+          "name": "pitch",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Pitch angle (-pi..+pi)",
+          "units": "rad",
+          "offset": 8,
+          "size": 4
+        },
+        {
+          "name": "yaw",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Yaw angle (-pi..+pi)",
+          "units": "rad",
+          "offset": 12,
+          "size": 4
+        },
+        {
+          "name": "rollspeed",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Roll angular speed",
+          "units": "rad/s",
+          "offset": 16,
+          "size": 4
+        },
+        {
+          "name": "pitchspeed",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Pitch angular speed",
+          "units": "rad/s",
+          "offset": 20,
+          "size": 4
+        },
+        {
+          "name": "yawspeed",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Yaw angular speed",
+          "units": "rad/s",
+          "offset": 24,
+          "size": 4
+        }
+      ],
+      "crcExtra": 166,
+      "minPayloadLength": 28
+    },
+    {
+      "id": 39,
+      "name": "MISSION_ITEM",
+      "description": "Message encoding a mission item.\n        This message is emitted to announce the presence of a mission item and to set a mission item on the system.\n        The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN may be used to indicate an optional/default value (e.g. to use the system's current latitude or yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html.",
+      "fields": [
+        {
+          "name": "param1",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "PARAM1, see MAV_CMD enum",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "param2",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "PARAM2, see MAV_CMD enum",
+          "offset": 4,
+          "size": 4
+        },
+        {
+          "name": "param3",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "PARAM3, see MAV_CMD enum",
+          "offset": 8,
+          "size": 4
+        },
+        {
+          "name": "param4",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "PARAM4, see MAV_CMD enum",
+          "offset": 12,
+          "size": 4
+        },
+        {
+          "name": "x",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "PARAM5 / local: X coordinate, global: latitude",
+          "offset": 16,
+          "size": 4
+        },
+        {
+          "name": "y",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "PARAM6 / local: Y coordinate, global: longitude",
+          "offset": 20,
+          "size": 4
+        },
+        {
+          "name": "z",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "PARAM7 / local: Z coordinate, global: altitude (relative or absolute, depending on frame).",
+          "offset": 24,
+          "size": 4
+        },
+        {
+          "name": "seq",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Sequence",
+          "offset": 28,
+          "size": 2
+        },
+        {
+          "name": "command",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "The scheduled action for the waypoint.",
+          "enumName": "MAV_CMD",
+          "offset": 30,
+          "size": 2
+        },
+        {
+          "name": "target_system",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "System ID",
+          "offset": 32,
+          "size": 1
+        },
+        {
+          "name": "target_component",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Component ID",
+          "offset": 33,
+          "size": 1
+        },
+        {
+          "name": "frame",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "The coordinate system of the waypoint.",
+          "enumName": "MAV_FRAME",
+          "offset": 34,
+          "size": 1
+        },
+        {
+          "name": "current",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "false:0, true:1",
+          "offset": 35,
+          "size": 1
+        },
+        {
+          "name": "autocontinue",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Autocontinue to next waypoint. 0: false, 1: true. Set false to pause mission after the item completes.",
+          "offset": 36,
+          "size": 1
+        },
+        {
+          "name": "mission_type",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Mission type.",
+          "enumName": "MAV_MISSION_TYPE",
+          "offset": 37,
+          "size": 1
+        }
+      ],
+      "crcExtra": 92,
+      "minPayloadLength": 38
+    },
+    {
+      "id": 40,
+      "name": "MISSION_REQUEST",
+      "description": "Request the information of the mission item with the sequence number seq. The response of the system to this message should be a MISSION_ITEM message. https://mavlink.io/en/services/mission.html",
+      "fields": [
+        {
+          "name": "seq",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Sequence",
+          "offset": 0,
+          "size": 2
+        },
+        {
+          "name": "target_system",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "System ID",
+          "offset": 2,
+          "size": 1
+        },
+        {
+          "name": "target_component",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Component ID",
+          "offset": 3,
+          "size": 1
+        },
+        {
+          "name": "mission_type",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Mission type.",
+          "enumName": "MAV_MISSION_TYPE",
+          "offset": 4,
+          "size": 1
+        }
+      ],
+      "crcExtra": 18,
+      "minPayloadLength": 5
+    },
+    {
+      "id": 69,
+      "name": "MANUAL_CONTROL",
+      "description": "Manual (joystick) control message.\n        This message represents movement axes and button using standard joystick axes nomenclature. Unused axes can be disabled and buttons states are transmitted as individual on/off bits of a bitmask. For more information see https://mavlink.io/en/services/manual_control.html",
+      "fields": [
+        {
+          "name": "x",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "X-axis, normalized to the range [-1000,1000]. A value of INT16_MAX indicates that this axis is invalid. Generally corresponds to forward(1000)-backward(-1000) movement on a joystick and the pitch of a vehicle.",
+          "offset": 0,
+          "size": 2
+        },
+        {
+          "name": "y",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Y-axis, normalized to the range [-1000,1000]. A value of INT16_MAX indicates that this axis is invalid. Generally corresponds to left(-1000)-right(1000) movement on a joystick and the roll of a vehicle.",
+          "offset": 2,
+          "size": 2
+        },
+        {
+          "name": "z",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Z-axis, normalized to the range [-1000,1000]. A value of INT16_MAX indicates that this axis is invalid. Generally corresponds to a separate slider movement with maximum being 1000 and minimum being -1000 on a joystick and the thrust of a vehicle. Positive values are positive thrust, negative values are negative thrust.",
+          "offset": 4,
+          "size": 2
+        },
+        {
+          "name": "r",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "R-axis, normalized to the range [-1000,1000]. A value of INT16_MAX indicates that this axis is invalid. Generally corresponds to a twisting of the joystick, with clockwise being 1000 and counter-clockwise being -1000, and the yaw of a vehicle.",
+          "offset": 6,
+          "size": 2
+        },
+        {
+          "name": "buttons",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "A bitfield corresponding to the joystick buttons' 0-15 current state, 1 for pressed, 0 for released. The lowest bit corresponds to Button 1.",
+          "offset": 8,
+          "size": 2
+        },
+        {
+          "name": "buttons2",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "A bitfield corresponding to the joystick buttons' 16-31 current state, 1 for pressed, 0 for released. The lowest bit corresponds to Button 16.",
+          "offset": 10,
+          "size": 2
+        },
+        {
+          "name": "s",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Pitch-only-axis, normalized to the range [-1000,1000]. Generally corresponds to pitch on vehicles with additional degrees of freedom. Valid if bit 0 of enabled_extensions field is set. Set to 0 if invalid.",
+          "offset": 12,
+          "size": 2
+        },
+        {
+          "name": "t",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Roll-only-axis, normalized to the range [-1000,1000]. Generally corresponds to roll on vehicles with additional degrees of freedom. Valid if bit 1 of enabled_extensions field is set. Set to 0 if invalid.",
+          "offset": 14,
+          "size": 2
+        },
+        {
+          "name": "aux1",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Aux continuous input field 1. Normalized in the range [-1000,1000]. Purpose defined by recipient. Valid data if bit 2 of enabled_extensions field is set. 0 if bit 2 is unset.",
+          "offset": 16,
+          "size": 2
+        },
+        {
+          "name": "aux2",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Aux continuous input field 2. Normalized in the range [-1000,1000]. Purpose defined by recipient. Valid data if bit 3 of enabled_extensions field is set. 0 if bit 3 is unset.",
+          "offset": 18,
+          "size": 2
+        },
+        {
+          "name": "aux3",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Aux continuous input field 3. Normalized in the range [-1000,1000]. Purpose defined by recipient. Valid data if bit 4 of enabled_extensions field is set. 0 if bit 4 is unset.",
+          "offset": 20,
+          "size": 2
+        },
+        {
+          "name": "aux4",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Aux continuous input field 4. Normalized in the range [-1000,1000]. Purpose defined by recipient. Valid data if bit 5 of enabled_extensions field is set. 0 if bit 5 is unset.",
+          "offset": 22,
+          "size": 2
+        },
+        {
+          "name": "aux5",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Aux continuous input field 5. Normalized in the range [-1000,1000]. Purpose defined by recipient. Valid data if bit 6 of enabled_extensions field is set. 0 if bit 6 is unset.",
+          "offset": 24,
+          "size": 2
+        },
+        {
+          "name": "aux6",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Aux continuous input field 6. Normalized in the range [-1000,1000]. Purpose defined by recipient. Valid data if bit 7 of enabled_extensions field is set. 0 if bit 7 is unset.",
+          "offset": 26,
+          "size": 2
+        },
+        {
+          "name": "target",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "The system to be controlled.",
+          "offset": 28,
+          "size": 1
+        },
+        {
+          "name": "enabled_extensions",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Set bits to 1 to indicate which of the following extension fields contain valid data: bit 0: pitch, bit 1: roll, bit 2: aux1, bit 3: aux2, bit 4: aux3, bit 5: aux4, bit 6: aux5, bit 7: aux6",
+          "offset": 29,
+          "size": 1
+        }
+      ],
+      "crcExtra": 110,
+      "minPayloadLength": 30
+    },
+    {
+      "id": 74,
+      "name": "VFR_HUD",
+      "description": "Metrics typically displayed on a HUD for fixed wing aircraft.",
+      "fields": [
+        {
+          "name": "airspeed",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Vehicle speed in form appropriate for vehicle type. For standard aircraft this is typically calibrated airspeed (CAS) or indicated airspeed (IAS) - either of which can be used by a pilot to estimate stall speed.",
+          "units": "m/s",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "groundspeed",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Current ground speed.",
+          "units": "m/s",
+          "offset": 4,
+          "size": 4
+        },
+        {
+          "name": "alt",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Current altitude (MSL).",
+          "units": "m",
+          "offset": 8,
+          "size": 4
+        },
+        {
+          "name": "climb",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Current climb rate.",
+          "units": "m/s",
+          "offset": 12,
+          "size": 4
+        },
+        {
+          "name": "heading",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Current heading in compass units (0-360, 0=north).",
+          "units": "deg",
+          "offset": 16,
+          "size": 2
+        },
+        {
+          "name": "throttle",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Current throttle setting (0 to 100).",
+          "units": "%",
+          "offset": 18,
+          "size": 2
+        }
+      ],
+      "crcExtra": 133,
+      "minPayloadLength": 20
+    },
+    {
+      "id": 76,
+      "name": "COMMAND_LONG",
+      "description": "Send a command with up to seven parameters to the MAV. COMMAND_INT is generally preferred when sending MAV_CMD commands that include positional information; it offers higher precision and allows the MAV_FRAME to be specified (which may otherwise be ambiguous, particularly for altitude). The command microservice is documented at https://mavlink.io/en/services/command.html",
+      "fields": [
+        {
+          "name": "param1",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Parameter 1 (for the specific command).",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "param2",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Parameter 2 (for the specific command).",
+          "offset": 4,
+          "size": 4
+        },
+        {
+          "name": "param3",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Parameter 3 (for the specific command).",
+          "offset": 8,
+          "size": 4
+        },
+        {
+          "name": "param4",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Parameter 4 (for the specific command).",
+          "offset": 12,
+          "size": 4
+        },
+        {
+          "name": "param5",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Parameter 5 (for the specific command).",
+          "offset": 16,
+          "size": 4
+        },
+        {
+          "name": "param6",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Parameter 6 (for the specific command).",
+          "offset": 20,
+          "size": 4
+        },
+        {
+          "name": "param7",
+          "type": "float",
+          "arrayLength": 0,
+          "description": "Parameter 7 (for the specific command).",
+          "offset": 24,
+          "size": 4
+        },
+        {
+          "name": "command",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Command ID (of command to send).",
+          "enumName": "MAV_CMD",
+          "offset": 28,
+          "size": 2
+        },
+        {
+          "name": "target_system",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "System which should execute the command",
+          "offset": 30,
+          "size": 1
+        },
+        {
+          "name": "target_component",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Component which should execute the command, 0 for all components",
+          "offset": 31,
+          "size": 1
+        },
+        {
+          "name": "confirmation",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "0: First transmission of this command. 1-255: Confirmation transmissions (e.g. for kill command)",
+          "offset": 32,
+          "size": 1
+        }
+      ],
+      "crcExtra": 117,
+      "minPayloadLength": 33
+    },
+    {
+      "id": 125,
+      "name": "POWER_STATUS",
+      "description": "Power supply status",
+      "fields": [
+        {
+          "name": "Vcc",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "5V rail voltage.",
+          "units": "mV",
+          "offset": 0,
+          "size": 2
+        },
+        {
+          "name": "Vservo",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Servo rail voltage.",
+          "units": "mV",
+          "offset": 2,
+          "size": 2
+        },
+        {
+          "name": "flags",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Bitmap of power supply status flags.",
+          "enumName": "MAV_POWER_STATUS",
+          "offset": 4,
+          "size": 2
+        }
+      ],
+      "crcExtra": 203,
+      "minPayloadLength": 6
+    },
+    {
+      "id": 0,
+      "name": "HEARTBEAT",
+      "description": "The heartbeat message shows that a system or component is present and responding. The type and autopilot fields (along with the message component id), allow the receiving system to treat further messages from this system appropriately (e.g. by laying out the user interface based on the autopilot). This microservice is documented at https://mavlink.io/en/services/heartbeat.html",
+      "fields": [
+        {
+          "name": "custom_mode",
+          "type": "uint32_t",
+          "arrayLength": 0,
+          "description": "A bitfield for use for autopilot-specific flags",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "type",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.",
+          "enumName": "MAV_TYPE",
+          "offset": 4,
+          "size": 1
+        },
+        {
+          "name": "autopilot",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "Autopilot type / class. Use MAV_AUTOPILOT_INVALID for components that are not flight controllers.",
+          "enumName": "MAV_AUTOPILOT",
+          "offset": 5,
+          "size": 1
+        },
+        {
+          "name": "base_mode",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "System mode bitmap.",
+          "enumName": "MAV_MODE_FLAG",
+          "offset": 6,
+          "size": 1
+        },
+        {
+          "name": "system_status",
+          "type": "uint8_t",
+          "arrayLength": 0,
+          "description": "System status flag.",
+          "enumName": "MAV_STATE",
+          "offset": 7,
+          "size": 1
+        },
+        {
+          "name": "mavlink_version",
+          "type": "uint8_t_mavlink_version",
+          "arrayLength": 0,
+          "description": "MAVLink version, not writable by user, gets added by protocol because of magic data type: uint8_t_mavlink_version",
+          "offset": 8,
+          "size": 1
+        }
+      ],
+      "crcExtra": 253,
+      "minPayloadLength": 9
+    },
+    {
+      "id": 33,
+      "name": "GLOBAL_POSITION_INT",
+      "description": "The filtered global position (e.g. fused GPS and accelerometers). The position is in GPS-frame (right-handed, Z-up). It is designed as scaled integer message since the resolution of float is not sufficient.",
+      "fields": [
+        {
+          "name": "time_boot_ms",
+          "type": "uint32_t",
+          "arrayLength": 0,
+          "description": "Timestamp (time since system boot).",
+          "units": "ms",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "lat",
+          "type": "int32_t",
+          "arrayLength": 0,
+          "description": "Latitude, expressed",
+          "units": "degE7",
+          "offset": 4,
+          "size": 4
+        },
+        {
+          "name": "lon",
+          "type": "int32_t",
+          "arrayLength": 0,
+          "description": "Longitude, expressed",
+          "units": "degE7",
+          "offset": 8,
+          "size": 4
+        },
+        {
+          "name": "alt",
+          "type": "int32_t",
+          "arrayLength": 0,
+          "description": "Altitude (MSL). Note that virtually all GPS modules provide both WGS84 and MSL.",
+          "units": "mm",
+          "offset": 12,
+          "size": 4
+        },
+        {
+          "name": "relative_alt",
+          "type": "int32_t",
+          "arrayLength": 0,
+          "description": "Altitude above home",
+          "units": "mm",
+          "offset": 16,
+          "size": 4
+        },
+        {
+          "name": "vx",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Ground X Speed (Latitude, positive north)",
+          "units": "cm/s",
+          "offset": 20,
+          "size": 2
+        },
+        {
+          "name": "vy",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Ground Y Speed (Longitude, positive east)",
+          "units": "cm/s",
+          "offset": 22,
+          "size": 2
+        },
+        {
+          "name": "vz",
+          "type": "int16_t",
+          "arrayLength": 0,
+          "description": "Ground Z Speed (Altitude, positive down)",
+          "units": "cm/s",
+          "offset": 24,
+          "size": 2
+        },
+        {
+          "name": "hdg",
+          "type": "uint16_t",
+          "arrayLength": 0,
+          "description": "Vehicle heading (yaw angle), 0.0..359.99 degrees. If unknown, set to: UINT16_MAX",
+          "units": "cdeg",
+          "offset": 26,
+          "size": 2
+        }
+      ],
+      "crcExtra": 235,
+      "minPayloadLength": 28
+    }
+  ],
+  "enums": [
+    {
+      "name": "MAV_SYS_STATUS_SENSOR",
+      "description": "These encode the sensors whose status is sent as part of the SYS_STATUS message.",
+      "entries": [
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_GYRO",
+          "value": 1,
+          "description": "0x01 3D gyro"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_ACCEL",
+          "value": 2,
+          "description": "0x02 3D accelerometer"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_MAG",
+          "value": 4,
+          "description": "0x04 3D magnetometer"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE",
+          "value": 8,
+          "description": "0x08 absolute pressure"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_DIFFERENTIAL_PRESSURE",
+          "value": 16,
+          "description": "0x10 differential pressure"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_GPS",
+          "value": 32,
+          "description": "0x20 GPS"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_OPTICAL_FLOW",
+          "value": 64,
+          "description": "0x40 optical flow"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_VISION_POSITION",
+          "value": 128,
+          "description": "0x80 computer vision position"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_LASER_POSITION",
+          "value": 256,
+          "description": "0x100 laser based position"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_EXTERNAL_GROUND_TRUTH",
+          "value": 512,
+          "description": "0x200 external ground truth (Vicon or Leica)"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_ANGULAR_RATE_CONTROL",
+          "value": 1024,
+          "description": "0x400 3D angular rate control"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_ATTITUDE_STABILIZATION",
+          "value": 2048,
+          "description": "0x800 attitude stabilization"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_YAW_POSITION",
+          "value": 4096,
+          "description": "0x1000 yaw position"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_Z_ALTITUDE_CONTROL",
+          "value": 8192,
+          "description": "0x2000 z/altitude control"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_XY_POSITION_CONTROL",
+          "value": 16384,
+          "description": "0x4000 x/y position control"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_MOTOR_OUTPUTS",
+          "value": 32768,
+          "description": "0x8000 motor outputs / control"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_RC_RECEIVER",
+          "value": 65536,
+          "description": "0x10000 RC receiver"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_GYRO2",
+          "value": 131072,
+          "description": "0x20000 2nd 3D gyro"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_ACCEL2",
+          "value": 262144,
+          "description": "0x40000 2nd 3D accelerometer"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_MAG2",
+          "value": 524288,
+          "description": "0x80000 2nd 3D magnetometer"
+        },
+        {
+          "name": "MAV_SYS_STATUS_GEOFENCE",
+          "value": 1048576,
+          "description": "0x100000 geofence"
+        },
+        {
+          "name": "MAV_SYS_STATUS_AHRS",
+          "value": 2097152,
+          "description": "0x200000 AHRS subsystem health"
+        },
+        {
+          "name": "MAV_SYS_STATUS_TERRAIN",
+          "value": 4194304,
+          "description": "0x400000 Terrain subsystem health"
+        },
+        {
+          "name": "MAV_SYS_STATUS_REVERSE_MOTOR",
+          "value": 8388608,
+          "description": "0x800000 Motors are reversed"
+        },
+        {
+          "name": "MAV_SYS_STATUS_LOGGING",
+          "value": 16777216,
+          "description": "0x1000000 Logging"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_BATTERY",
+          "value": 33554432,
+          "description": "0x2000000 Battery"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_PROXIMITY",
+          "value": 67108864,
+          "description": "0x4000000 Proximity"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_SATCOM",
+          "value": 134217728,
+          "description": "0x8000000 Satellite Communication"
+        },
+        {
+          "name": "MAV_SYS_STATUS_PREARM_CHECK",
+          "value": 268435456,
+          "description": "0x10000000 pre-arm check status. Always healthy when armed"
+        },
+        {
+          "name": "MAV_SYS_STATUS_OBSTACLE_AVOIDANCE",
+          "value": 536870912,
+          "description": "0x20000000 Avoidance/collision prevention"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_PROPULSION",
+          "value": 1073741824,
+          "description": "0x40000000 propulsion (actuator, esc, motor or propellor)"
+        },
+        {
+          "name": "MAV_SYS_STATUS_EXTENSION_USED",
+          "value": 2147483648,
+          "description": "0x80000000 Extended bit-field are used for further sensor status bits (needs to be set in onboard_control_sensors_present only)"
+        }
+      ],
+      "isBitmask": true
+    },
+    {
+      "name": "MAV_SYS_STATUS_SENSOR_EXTENDED",
+      "description": "These encode the sensors whose status is sent as part of the SYS_STATUS message in the extended fields.",
+      "entries": [
+        {
+          "name": "MAV_SYS_STATUS_RECOVERY_SYSTEM",
+          "value": 1,
+          "description": "0x01 Recovery system (parachute, balloon, retracts etc)"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_LEAK",
+          "value": 2,
+          "description": "0x02 Leak detection"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_GYRO3",
+          "value": 4,
+          "description": "0x04 3rd 3D gyro"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_ACCEL3",
+          "value": 8,
+          "description": "0x08 3rd 3D accelerometer"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_GYRO4",
+          "value": 16,
+          "description": "0x10 4th 3D gyro"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_ACCEL4",
+          "value": 32,
+          "description": "0x20 4th 3D accelerometer"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_MAG3",
+          "value": 64,
+          "description": "0x40 3rd 3D magnetometer"
+        },
+        {
+          "name": "MAV_SYS_STATUS_SENSOR_3D_MAG4",
+          "value": 128,
+          "description": "0x80 4th 3D magnetometer"
+        }
+      ],
+      "isBitmask": true
+    },
+    {
+      "name": "MAV_FRAME",
+      "description": "Coordinate frames used by MAVLink. Not all frames are supported by all commands, messages, or vehicles.\n\n      Global frames use the following naming conventions:\n      - \"GLOBAL\": Global coordinate frame with WGS84 latitude/longitude and altitude positive over mean sea level (MSL) by default.\n        The following modifiers may be used with \"GLOBAL\":\n        - \"RELATIVE_ALT\": Altitude is relative to the vehicle home position rather than MSL.\n        - \"TERRAIN_ALT\": Altitude is relative to ground level rather than MSL.\n        - \"INT\": Latitude/longitude (in degrees) are scaled by multiplying by 1E7.\n\n      Local frames use the following naming conventions:\n      - \"LOCAL\": Origin of local frame is fixed relative to earth. Unless otherwise specified this origin is the origin of the vehicle position-estimator (\"EKF\").\n      - \"BODY\": Origin of local frame travels with the vehicle. NOTE, \"BODY\" does NOT indicate alignment of frame axis with vehicle attitude.\n      - \"OFFSET\": Deprecated synonym for \"BODY\" (origin travels with the vehicle). Not to be used for new frames.\n\n      Some deprecated frames do not follow these conventions (e.g. MAV_FRAME_BODY_NED and MAV_FRAME_BODY_OFFSET_NED).",
+      "entries": [
+        {
+          "name": "MAV_FRAME_GLOBAL",
+          "value": 0,
+          "description": "Global (WGS84) coordinate frame + altitude relative to mean sea level (MSL)."
+        },
+        {
+          "name": "MAV_FRAME_LOCAL_NED",
+          "value": 1,
+          "description": "NED local tangent frame (x: North, y: East, z: Down) with origin fixed relative to earth."
+        },
+        {
+          "name": "MAV_FRAME_MISSION",
+          "value": 2,
+          "description": "NOT a coordinate frame, indicates a mission command."
+        },
+        {
+          "name": "MAV_FRAME_GLOBAL_RELATIVE_ALT",
+          "value": 3,
+          "description": "Global (WGS84) coordinate frame + altitude relative to the home position."
+        },
+        {
+          "name": "MAV_FRAME_LOCAL_ENU",
+          "value": 4,
+          "description": "ENU local tangent frame (x: East, y: North, z: Up) with origin fixed relative to earth."
+        },
+        {
+          "name": "MAV_FRAME_GLOBAL_INT",
+          "value": 5,
+          "description": "Global (WGS84) coordinate frame (scaled) + altitude relative to mean sea level (MSL)."
+        },
+        {
+          "name": "MAV_FRAME_GLOBAL_RELATIVE_ALT_INT",
+          "value": 6,
+          "description": "Global (WGS84) coordinate frame (scaled) + altitude relative to the home position."
+        },
+        {
+          "name": "MAV_FRAME_LOCAL_OFFSET_NED",
+          "value": 7,
+          "description": "NED local tangent frame (x: North, y: East, z: Down) with origin that travels with the vehicle."
+        },
+        {
+          "name": "MAV_FRAME_BODY_NED",
+          "value": 8,
+          "description": "Same as MAV_FRAME_LOCAL_NED when used to represent position values. Same as MAV_FRAME_BODY_FRD when used with velocity/acceleration values."
+        },
+        {
+          "name": "MAV_FRAME_BODY_OFFSET_NED",
+          "value": 9,
+          "description": "This is the same as MAV_FRAME_BODY_FRD."
+        },
+        {
+          "name": "MAV_FRAME_GLOBAL_TERRAIN_ALT",
+          "value": 10,
+          "description": "Global (WGS84) coordinate frame with AGL altitude (altitude at ground level)."
+        },
+        {
+          "name": "MAV_FRAME_GLOBAL_TERRAIN_ALT_INT",
+          "value": 11,
+          "description": "Global (WGS84) coordinate frame (scaled) with AGL altitude (altitude at ground level)."
+        },
+        {
+          "name": "MAV_FRAME_BODY_FRD",
+          "value": 12,
+          "description": "FRD local frame aligned to the vehicle's attitude (x: Forward, y: Right, z: Down) with an origin that travels with vehicle."
+        },
+        {
+          "name": "MAV_FRAME_RESERVED_13",
+          "value": 13,
+          "description": "MAV_FRAME_BODY_FLU - Body fixed frame of reference, Z-up (x: Forward, y: Left, z: Up)."
+        },
+        {
+          "name": "MAV_FRAME_RESERVED_14",
+          "value": 14,
+          "description": "MAV_FRAME_MOCAP_NED - Odometry local coordinate frame of data given by a motion capture system, Z-down (x: North, y: East, z: Down)."
+        },
+        {
+          "name": "MAV_FRAME_RESERVED_15",
+          "value": 15,
+          "description": "MAV_FRAME_MOCAP_ENU - Odometry local coordinate frame of data given by a motion capture system, Z-up (x: East, y: North, z: Up)."
+        },
+        {
+          "name": "MAV_FRAME_RESERVED_16",
+          "value": 16,
+          "description": "MAV_FRAME_VISION_NED - Odometry local coordinate frame of data given by a vision estimation system, Z-down (x: North, y: East, z: Down)."
+        },
+        {
+          "name": "MAV_FRAME_RESERVED_17",
+          "value": 17,
+          "description": "MAV_FRAME_VISION_ENU - Odometry local coordinate frame of data given by a vision estimation system, Z-up (x: East, y: North, z: Up)."
+        },
+        {
+          "name": "MAV_FRAME_RESERVED_18",
+          "value": 18,
+          "description": "MAV_FRAME_ESTIM_NED - Odometry local coordinate frame of data given by an estimator running onboard the vehicle, Z-down (x: North, y: East, z: Down)."
+        },
+        {
+          "name": "MAV_FRAME_RESERVED_19",
+          "value": 19,
+          "description": "MAV_FRAME_ESTIM_ENU - Odometry local coordinate frame of data given by an estimator running onboard the vehicle, Z-up (x: East, y: North, z: Up)."
+        },
+        {
+          "name": "MAV_FRAME_LOCAL_FRD",
+          "value": 20,
+          "description": "FRD local tangent frame (x: Forward, y: Right, z: Down) with origin fixed relative to earth. The forward axis is aligned to the front of the vehicle in the horizontal plane."
+        },
+        {
+          "name": "MAV_FRAME_LOCAL_FLU",
+          "value": 21,
+          "description": "FLU local tangent frame (x: Forward, y: Left, z: Up) with origin fixed relative to earth. The forward axis is aligned to the front of the vehicle in the horizontal plane."
+        }
+      ],
+      "isBitmask": false
+    },
+    {
+      "name": "MAV_CMD",
+      "description": "Commands to be executed by the MAV. They can be executed on user request, or as part of a mission script. If the action is used in a mission, the parameter mapping to the waypoint/mission message is as follows: Param 1, Param 2, Param 3, Param 4, X: Param 5, Y:Param 6, Z:Param 7. This command list is similar what ARINC 424 is for commercial aircraft: A data format how to interpret waypoint/mission data. NaN and INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current yaw or latitude rather than a specific value). See https://mavlink.io/en/guide/xml_schema.html#MAV_CMD for information about the structure of the MAV_CMD entries",
+      "entries": [
+        {
+          "name": "MAV_CMD_NAV_WAYPOINT",
+          "value": 16,
+          "description": "Navigate to waypoint. This is intended for use in missions (for guided commands outside of missions use MAV_CMD_DO_REPOSITION)."
+        },
+        {
+          "name": "MAV_CMD_NAV_LOITER_UNLIM",
+          "value": 17,
+          "description": "Loiter around this waypoint an unlimited amount of time"
+        },
+        {
+          "name": "MAV_CMD_NAV_LOITER_TURNS",
+          "value": 18,
+          "description": "Loiter around this waypoint for X turns"
+        },
+        {
+          "name": "MAV_CMD_NAV_LOITER_TIME",
+          "value": 19,
+          "description": "Loiter at the specified latitude, longitude and altitude for a certain amount of time. Multicopter vehicles stop at the point (within a vehicle-specific acceptance radius). Forward-only moving vehicles (e.g. fixed-wing) circle the point with the specified radius/direction. If the Heading Required parameter (2) is non-zero forward moving aircraft will only leave the loiter circle once heading towards the next waypoint."
+        },
+        {
+          "name": "MAV_CMD_NAV_RETURN_TO_LAUNCH",
+          "value": 20,
+          "description": "Return to launch location"
+        },
+        {
+          "name": "MAV_CMD_NAV_LAND",
+          "value": 21,
+          "description": "Land at location."
+        },
+        {
+          "name": "MAV_CMD_NAV_TAKEOFF",
+          "value": 22,
+          "description": "Takeoff from ground / hand. Vehicles that support multiple takeoff modes (e.g. VTOL quadplane) should take off using the currently configured mode."
+        },
+        {
+          "name": "MAV_CMD_NAV_LAND_LOCAL",
+          "value": 23,
+          "description": "Land at local position (local frame only)"
+        },
+        {
+          "name": "MAV_CMD_NAV_TAKEOFF_LOCAL",
+          "value": 24,
+          "description": "Takeoff from local position (local frame only)"
+        },
+        {
+          "name": "MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT",
+          "value": 30,
+          "description": "Continue on the current course and climb/descend to specified altitude.  When the altitude is reached continue to the next command (i.e., don't proceed to the next command until the desired altitude is reached."
+        },
+        {
+          "name": "MAV_CMD_NAV_LOITER_TO_ALT",
+          "value": 31,
+          "description": "Begin loiter at the specified Latitude and Longitude.  If Lat=Lon=0, then loiter at the current position.  Don't consider the navigation command complete (don't leave loiter) until the altitude has been reached. Additionally, if the Heading Required parameter is non-zero the aircraft will not leave the loiter until heading toward the next waypoint."
+        },
+        {
+          "name": "MAV_CMD_DO_FOLLOW",
+          "value": 32,
+          "description": "Begin following a target"
+        },
+        {
+          "name": "MAV_CMD_DO_FOLLOW_REPOSITION",
+          "value": 33,
+          "description": "Reposition the MAV after a follow target command has been sent"
+        },
+        {
+          "name": "MAV_CMD_DO_ORBIT",
+          "value": 34,
+          "description": "Start orbiting on the circumference of a circle defined by the parameters. Setting values to NaN/INT32_MAX (as appropriate) results in using defaults."
+        },
+        {
+          "name": "MAV_CMD_DO_FIGURE_EIGHT",
+          "value": 35,
+          "description": "Fly a figure eight path as defined by the parameters.\n          Set parameters to NaN/INT32_MAX (as appropriate) to use system-default values.\n          The command is intended for fixed wing vehicles (and VTOL hybrids flying in fixed-wing mode), allowing POI tracking for gimbals that don't support infinite rotation.\n          This command only defines the flight path. Speed should be set independently (use e.g. MAV_CMD_DO_CHANGE_SPEED).\n          Yaw and other degrees of freedom are not specified, and will be flight-stack specific (on vehicles where they can be controlled independent of the heading)."
+        },
+        {
+          "name": "MAV_CMD_NAV_ARC_WAYPOINT",
+          "value": 36,
+          "description": "Circular arc path waypoint.\n          This defines the end/exit point and angle (param1) of an arc path from the previous waypoint. A position is required before this command to define the start of the arc (e.g. current position, a MAV_CMD_NAV_WAYPOINT, or a MAV_CMD_NAV_ARC_WAYPOINT).\n          The resulting path is a circular arc in the NE frame, with the difference in height being defined by the difference in waypoint altitudes."
+        },
+        {
+          "name": "MAV_CMD_NAV_ROI",
+          "value": 80,
+          "description": "Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras."
+        },
+        {
+          "name": "MAV_CMD_NAV_PATHPLANNING",
+          "value": 81,
+          "description": "Control autonomous path planning on the MAV."
+        },
+        {
+          "name": "MAV_CMD_NAV_SPLINE_WAYPOINT",
+          "value": 82,
+          "description": "Navigate to waypoint using a spline path."
+        },
+        {
+          "name": "MAV_CMD_NAV_VTOL_TAKEOFF",
+          "value": 84,
+          "description": "Takeoff from ground using VTOL mode, and transition to forward flight with specified heading. The command should be ignored by vehicles that dont support both VTOL and fixed-wing flight (multicopters, boats,etc.)."
+        },
+        {
+          "name": "MAV_CMD_NAV_VTOL_LAND",
+          "value": 85,
+          "description": "Land using VTOL mode"
+        },
+        {
+          "name": "MAV_CMD_NAV_GUIDED_ENABLE",
+          "value": 92,
+          "description": "Hand control over to an external controller"
+        },
+        {
+          "name": "MAV_CMD_NAV_DELAY",
+          "value": 93,
+          "description": "Delay the next navigation command a number of seconds or until a specified time"
+        },
+        {
+          "name": "MAV_CMD_NAV_PAYLOAD_PLACE",
+          "value": 94,
+          "description": "Descend and place payload. Vehicle moves to specified location, descends until it detects a hanging payload has reached the ground, and then releases the payload. If ground is not detected before the reaching the maximum descent value (param1), the command will complete without releasing the payload."
+        },
+        {
+          "name": "MAV_CMD_NAV_LAST",
+          "value": 95,
+          "description": "NOP - This command is only used to mark the upper limit of the NAV/ACTION commands in the enumeration"
+        },
+        {
+          "name": "MAV_CMD_CONDITION_DELAY",
+          "value": 112,
+          "description": "Delay mission state machine."
+        },
+        {
+          "name": "MAV_CMD_CONDITION_CHANGE_ALT",
+          "value": 113,
+          "description": "Ascend/descend to target altitude at specified rate. Delay mission state machine until desired altitude reached."
+        },
+        {
+          "name": "MAV_CMD_CONDITION_DISTANCE",
+          "value": 114,
+          "description": "Delay mission state machine until within desired distance of next NAV point."
+        },
+        {
+          "name": "MAV_CMD_CONDITION_YAW",
+          "value": 115,
+          "description": "Reach a certain target angle."
+        },
+        {
+          "name": "MAV_CMD_CONDITION_LAST",
+          "value": 159,
+          "description": "NOP - This command is only used to mark the upper limit of the CONDITION commands in the enumeration"
+        },
+        {
+          "name": "MAV_CMD_DO_SET_MODE",
+          "value": 176,
+          "description": "Set system mode."
+        },
+        {
+          "name": "MAV_CMD_DO_JUMP",
+          "value": 177,
+          "description": "Jump to the desired command in the mission list.  Repeat this action only the specified number of times"
+        },
+        {
+          "name": "MAV_CMD_DO_CHANGE_SPEED",
+          "value": 178,
+          "description": "Change speed and/or throttle set points. The value persists until it is overridden or there is a mode change"
+        },
+        {
+          "name": "MAV_CMD_DO_SET_HOME",
+          "value": 179,
+          "description": "Sets the home position to either to the current position or a specified position.\n          The home position is the default position that the system will return to and land on.\n          The position is set automatically by the system during the takeoff (and may also be set using this command).\n          Note: the current home position may be emitted in a HOME_POSITION message on request (using MAV_CMD_REQUEST_MESSAGE with param1=242)."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_PARAMETER",
+          "value": 180,
+          "description": "Set a system parameter.  Caution!  Use of this command requires knowledge of the numeric enumeration value of the parameter."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_RELAY",
+          "value": 181,
+          "description": "Set a relay to a condition. The current value may optionally be reported using RELAY_STATUS."
+        },
+        {
+          "name": "MAV_CMD_DO_REPEAT_RELAY",
+          "value": 182,
+          "description": "Cycle a relay on and off for a desired number of cycles with a desired period."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_SERVO",
+          "value": 183,
+          "description": "Set a servo to a desired PWM value."
+        },
+        {
+          "name": "MAV_CMD_DO_REPEAT_SERVO",
+          "value": 184,
+          "description": "Cycle a between its nominal setting and a desired PWM for a desired number of cycles with a desired period."
+        },
+        {
+          "name": "MAV_CMD_DO_FLIGHTTERMINATION",
+          "value": 185,
+          "description": "Terminate flight immediately.\n          Flight termination immediately and irreversibly terminates the current flight, returning the vehicle to ground.\n          The vehicle will ignore RC or other input until it has been power-cycled.\n          Termination may trigger safety measures, including: disabling motors and deployment of parachute on multicopters, and setting flight surfaces to initiate a landing pattern on fixed-wing).\n          On multicopters without a parachute it may trigger a crash landing.\n          Support for this command can be tested using the protocol bit: MAV_PROTOCOL_CAPABILITY_FLIGHT_TERMINATION.\n          Support for this command can also be tested by sending the command with param1=0 (< 0.5); the ACK should be either MAV_RESULT_FAILED or MAV_RESULT_UNSUPPORTED."
+        },
+        {
+          "name": "MAV_CMD_DO_CHANGE_ALTITUDE",
+          "value": 186,
+          "description": "Change altitude set point."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_ACTUATOR",
+          "value": 187,
+          "description": "Sets actuators (e.g. servos) to a desired value. The actuator numbers are mapped to specific outputs (e.g. on any MAIN or AUX PWM or UAVCAN) using a flight-stack specific mechanism (i.e. a parameter)."
+        },
+        {
+          "name": "MAV_CMD_DO_RETURN_PATH_START",
+          "value": 188,
+          "description": "Mission item to specify the start of a failsafe/landing return-path segment (the end of the segment is the next MAV_CMD_DO_LAND_START item).\n          A vehicle that is using missions for landing (e.g. in a return mode) will join the mission on the closest path of the return-path segment (instead of MAV_CMD_DO_LAND_START or the nearest waypoint).\n          The main use case is to minimize the failsafe flight path in corridor missions, where the inbound/outbound paths are constrained (by geofences) to the same particular path.\n          The MAV_CMD_DO_RETURN_PATH_START would be placed at the start of the return path.\n          If a failsafe occurs on the outbound path the vehicle will move to the nearest point on the return path (which is parallel for this kind of mission), effectively turning round and following the shortest path to landing.\n          If a failsafe occurs on the inbound path the vehicle is already on the return segment and will continue to landing.\n          The Latitude/Longitude/Altitude are optional, and may be set to 0 if not needed.\n          If specified, the item defines the waypoint at which the return segment starts.\n          If sent using as a command, the vehicle will perform a mission landing (using the land segment if defined) or reject the command if mission landings are not supported, or no mission landing is defined. When used as a command any position information in the command is ignored."
+        },
+        {
+          "name": "MAV_CMD_DO_LAND_START",
+          "value": 189,
+          "description": "Mission item to mark the start of a mission landing pattern, or a command to land with a mission landing pattern.\n\n        When used in a mission, this is a marker for the start of a sequence of mission items that represent a landing pattern.\n        It should be followed by a navigation item that defines the first waypoint of the landing sequence.\n        The start marker positional params are used only for selecting what landing pattern to use if several are defined in the mission (the selected pattern will be the one with the marker position that is closest to the vehicle when a landing is commanded).\n        If the marker item position has zero-values for latitude, longitude, and altitude, then landing pattern selection is instead based on the position of the first waypoint in the landing sequence.\n\n\t    When sent as a command it triggers a landing using a mission landing pattern.\n\t    The location parameters are not used in this case, and should be set to 0."
+        },
+        {
+          "name": "MAV_CMD_DO_RALLY_LAND",
+          "value": 190,
+          "description": "Command to perform a landing from a rally point."
+        },
+        {
+          "name": "MAV_CMD_DO_GO_AROUND",
+          "value": 191,
+          "description": "Command to safely abort an autonomous landing."
+        },
+        {
+          "name": "MAV_CMD_DO_REPOSITION",
+          "value": 192,
+          "description": "Reposition the vehicle to a specific WGS84 global position. This command is intended for guided commands (for missions use MAV_CMD_NAV_WAYPOINT instead)."
+        },
+        {
+          "name": "MAV_CMD_DO_PAUSE_CONTINUE",
+          "value": 193,
+          "description": "If in a GPS controlled position mode, hold the current position or continue."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_REVERSE",
+          "value": 194,
+          "description": "Set moving direction to forward or reverse."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_ROI_LOCATION",
+          "value": 195,
+          "description": "Sets the region of interest (ROI) to a location. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_ROI_WPNEXT_OFFSET",
+          "value": 196,
+          "description": "Sets the region of interest (ROI) to be toward next waypoint, with optional pitch/roll/yaw offset. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras. This command can be sent to a gimbal manager but not to a gimbal device. A gimbal device is not to react to this message."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_ROI_NONE",
+          "value": 197,
+          "description": "Cancels any previous ROI command returning the vehicle/sensors to default flight characteristics. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras. After this command the gimbal manager should go back to manual input if available, and otherwise assume a neutral position."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_ROI_SYSID",
+          "value": 198,
+          "description": "Mount tracks system with specified system ID. Determination of target vehicle position may be done with GLOBAL_POSITION_INT or any other means. This command can be sent to a gimbal manager but not to a gimbal device. A gimbal device is not to react to this message."
+        },
+        {
+          "name": "MAV_CMD_DO_CONTROL_VIDEO",
+          "value": 200,
+          "description": "Control onboard camera system."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_ROI",
+          "value": 201,
+          "description": "Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras."
+        },
+        {
+          "name": "MAV_CMD_DO_DIGICAM_CONFIGURE",
+          "value": 202,
+          "description": "Configure digital camera. This is a fallback message for systems that have not yet implemented PARAM_EXT_XXX messages and camera definition files (see https://mavlink.io/en/services/camera_def.html )."
+        },
+        {
+          "name": "MAV_CMD_DO_DIGICAM_CONTROL",
+          "value": 203,
+          "description": "Control digital camera. This is a fallback message for systems that have not yet implemented PARAM_EXT_XXX messages and camera definition files (see https://mavlink.io/en/services/camera_def.html )."
+        },
+        {
+          "name": "MAV_CMD_DO_MOUNT_CONFIGURE",
+          "value": 204,
+          "description": "Mission command to configure a camera or antenna mount"
+        },
+        {
+          "name": "MAV_CMD_DO_MOUNT_CONTROL",
+          "value": 205,
+          "description": "Mission command to control a camera or antenna mount"
+        },
+        {
+          "name": "MAV_CMD_DO_SET_CAM_TRIGG_DIST",
+          "value": 206,
+          "description": "Mission command to set camera trigger distance for this flight. The camera is triggered each time this distance is exceeded. This command can also be used to set the shutter integration time for the camera."
+        },
+        {
+          "name": "MAV_CMD_DO_FENCE_ENABLE",
+          "value": 207,
+          "description": "Enable the geofence.\n          This can be used in a mission or via the command protocol.\n          The persistence/lifetime of the setting is undefined.\n          Depending on flight stack implementation it may persist until superseded, or it may revert to a system default at the end of a mission.\n          Flight stacks typically reset the setting to system defaults on reboot."
+        },
+        {
+          "name": "MAV_CMD_DO_PARACHUTE",
+          "value": 208,
+          "description": "Mission item/command to release a parachute or enable/disable auto release."
+        },
+        {
+          "name": "MAV_CMD_DO_MOTOR_TEST",
+          "value": 209,
+          "description": "Command to perform motor test."
+        },
+        {
+          "name": "MAV_CMD_DO_INVERTED_FLIGHT",
+          "value": 210,
+          "description": "Change to/from inverted flight."
+        },
+        {
+          "name": "MAV_CMD_DO_GRIPPER",
+          "value": 211,
+          "description": "Mission command to operate a gripper."
+        },
+        {
+          "name": "MAV_CMD_DO_AUTOTUNE_ENABLE",
+          "value": 212,
+          "description": "Enable/disable autotune."
+        },
+        {
+          "name": "MAV_CMD_NAV_SET_YAW_SPEED",
+          "value": 213,
+          "description": "Sets a desired vehicle turn angle and speed change."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_CAM_TRIGG_INTERVAL",
+          "value": 214,
+          "description": "Mission command to set camera trigger interval for this flight. If triggering is enabled, the camera is triggered each time this interval expires. This command can also be used to set the shutter integration time for the camera."
+        },
+        {
+          "name": "MAV_CMD_DO_MOUNT_CONTROL_QUAT",
+          "value": 220,
+          "description": "Mission command to control a camera or antenna mount, using a quaternion as reference."
+        },
+        {
+          "name": "MAV_CMD_DO_GUIDED_MASTER",
+          "value": 221,
+          "description": "set id of master controller"
+        },
+        {
+          "name": "MAV_CMD_DO_GUIDED_LIMITS",
+          "value": 222,
+          "description": "Set limits for external control"
+        },
+        {
+          "name": "MAV_CMD_DO_ENGINE_CONTROL",
+          "value": 223,
+          "description": "Control vehicle engine. This is interpreted by the vehicles engine controller to change the target engine state. It is intended for vehicles with internal combustion engines"
+        },
+        {
+          "name": "MAV_CMD_DO_SET_MISSION_CURRENT",
+          "value": 224,
+          "description": "Set the mission item with sequence number seq as the current item and emit MISSION_CURRENT (whether or not the mission number changed).\n          If a mission is currently being executed, the system will continue to this new mission item on the shortest path, skipping any intermediate mission items.\n\t  Note that mission jump repeat counters are not reset unless param2 is set (see MAV_CMD_DO_JUMP param2).\n\n          This command may trigger a mission state-machine change on some systems: for example from MISSION_STATE_NOT_STARTED or MISSION_STATE_PAUSED to MISSION_STATE_ACTIVE.\n          If the system is in mission mode, on those systems this command might therefore start, restart or resume the mission.\n          If the system is not in mission mode this command must not trigger a switch to mission mode.\n\n          The mission may be \"reset\" using param2.\n          Resetting sets jump counters to initial values (to reset counters without changing the current mission item set the param1 to `-1`).\n          Resetting also explicitly changes a mission state of MISSION_STATE_COMPLETE to MISSION_STATE_PAUSED or MISSION_STATE_ACTIVE, potentially allowing it to resume when it is (next) in a mission mode.\n\n\t  The command will ACK with MAV_RESULT_FAILED if the sequence number is out of range (including if there is no mission item)."
+        },
+        {
+          "name": "MAV_CMD_DO_LAST",
+          "value": 240,
+          "description": "NOP - This command is only used to mark the upper limit of the DO commands in the enumeration"
+        },
+        {
+          "name": "MAV_CMD_PREFLIGHT_CALIBRATION",
+          "value": 241,
+          "description": "Trigger calibration. This command will be only accepted if in pre-flight mode. Except for Temperature Calibration, only one sensor should be set in a single message and all others should be zero."
+        },
+        {
+          "name": "MAV_CMD_PREFLIGHT_SET_SENSOR_OFFSETS",
+          "value": 242,
+          "description": "Set sensor offsets. This command will be only accepted if in pre-flight mode."
+        },
+        {
+          "name": "MAV_CMD_PREFLIGHT_UAVCAN",
+          "value": 243,
+          "description": "Trigger UAVCAN configuration (actuator ID assignment and direction mapping). Note that this maps to the legacy UAVCAN v0 function UAVCAN_ENUMERATE, which is intended to be executed just once during initial vehicle configuration (it is not a normal pre-flight command and has been poorly named)."
+        },
+        {
+          "name": "MAV_CMD_PREFLIGHT_STORAGE",
+          "value": 245,
+          "description": "Request storage of different parameter values and logs. This command will be only accepted if in pre-flight mode."
+        },
+        {
+          "name": "MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN",
+          "value": 246,
+          "description": "Request the reboot or shutdown of system components."
+        },
+        {
+          "name": "MAV_CMD_OVERRIDE_GOTO",
+          "value": 252,
+          "description": "Override current mission with command to pause mission, pause mission and move to position, continue/resume mission. When param 1 indicates that the mission is paused (MAV_GOTO_DO_HOLD), param 2 defines whether it holds in place or moves to another position."
+        },
+        {
+          "name": "MAV_CMD_OBLIQUE_SURVEY",
+          "value": 260,
+          "description": "Mission command to set a Camera Auto Mount Pivoting Oblique Survey (Replaces CAM_TRIGG_DIST for this purpose). The camera is triggered each time this distance is exceeded, then the mount moves to the next position. Params 4~6 set-up the angle limits and number of positions for oblique survey, where mount-enabled vehicles automatically roll the camera between shots to emulate an oblique camera setup (providing an increased HFOV). This command can also be used to set the shutter integration time for the camera."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_STANDARD_MODE",
+          "value": 262,
+          "description": "Enable the specified standard MAVLink mode.\n          If the specified mode is not supported, the vehicle should ACK with MAV_RESULT_FAILED.\n          See https://mavlink.io/en/services/standard_modes.html"
+        },
+        {
+          "name": "MAV_CMD_MISSION_START",
+          "value": 300,
+          "description": "start running a mission"
+        },
+        {
+          "name": "MAV_CMD_ACTUATOR_TEST",
+          "value": 310,
+          "description": "Actuator testing command. This is similar to MAV_CMD_DO_MOTOR_TEST but operates on the level of output functions, i.e. it is possible to test Motor1 independent from which output it is configured on. Autopilots must NACK this command with MAV_RESULT_TEMPORARILY_REJECTED while armed."
+        },
+        {
+          "name": "MAV_CMD_CONFIGURE_ACTUATOR",
+          "value": 311,
+          "description": "Actuator configuration command."
+        },
+        {
+          "name": "MAV_CMD_COMPONENT_ARM_DISARM",
+          "value": 400,
+          "description": "Arms / Disarms a component"
+        },
+        {
+          "name": "MAV_CMD_RUN_PREARM_CHECKS",
+          "value": 401,
+          "description": "Instructs a target system to run pre-arm checks.\n          This allows preflight checks to be run on demand, which may be useful on systems that normally run them at low rate, or which do not trigger checks when the armable state might have changed.\n          This command should return MAV_RESULT_ACCEPTED if it will run the checks.\n          The results of the checks are usually then reported in SYS_STATUS, EVENT, or STATUSTEXT messages (this is system-specific).\n          The command should return MAV_RESULT_TEMPORARILY_REJECTED if the system is already armed."
+        },
+        {
+          "name": "MAV_CMD_ILLUMINATOR_ON_OFF",
+          "value": 405,
+          "description": "Turns illuminators ON/OFF. An illuminator is a light source that is used for lighting up dark areas external to the system: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light)."
+        },
+        {
+          "name": "MAV_CMD_DO_ILLUMINATOR_CONFIGURE",
+          "value": 406,
+          "description": "Configures illuminator settings. An illuminator is a light source that is used for lighting up dark areas external to the system: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light)."
+        },
+        {
+          "name": "MAV_CMD_GET_HOME_POSITION",
+          "value": 410,
+          "description": "Request the home position from the vehicle.\n          The vehicle will ACK the command and emit the HOME_POSITION message."
+        },
+        {
+          "name": "MAV_CMD_INJECT_FAILURE",
+          "value": 420,
+          "description": "Inject artificial failure for testing purposes. Note that autopilots should implement an additional protection before accepting this command such as a specific param setting."
+        },
+        {
+          "name": "MAV_CMD_START_RX_PAIR",
+          "value": 500,
+          "description": "Starts receiver pairing."
+        },
+        {
+          "name": "MAV_CMD_GET_MESSAGE_INTERVAL",
+          "value": 510,
+          "description": "Request the interval between messages for a particular MAVLink message ID.\n          The receiver should ACK the command and then emit its response in a MESSAGE_INTERVAL message."
+        },
+        {
+          "name": "MAV_CMD_SET_MESSAGE_INTERVAL",
+          "value": 511,
+          "description": "Set the interval between messages for a particular MAVLink message ID. This interface replaces REQUEST_DATA_STREAM."
+        },
+        {
+          "name": "MAV_CMD_REQUEST_MESSAGE",
+          "value": 512,
+          "description": "Request the target system(s) emit a single instance of a specified message (i.e. a \"one-shot\" version of MAV_CMD_SET_MESSAGE_INTERVAL)."
+        },
+        {
+          "name": "MAV_CMD_REQUEST_PROTOCOL_VERSION",
+          "value": 519,
+          "description": "Request MAVLink protocol version compatibility. All receivers should ACK the command and then emit their capabilities in an PROTOCOL_VERSION message"
+        },
+        {
+          "name": "MAV_CMD_REQUEST_AUTOPILOT_CAPABILITIES",
+          "value": 520,
+          "description": "Request autopilot capabilities. The receiver should ACK the command and then emit its capabilities in an AUTOPILOT_VERSION message"
+        },
+        {
+          "name": "MAV_CMD_REQUEST_CAMERA_INFORMATION",
+          "value": 521,
+          "description": "Request camera information (CAMERA_INFORMATION)."
+        },
+        {
+          "name": "MAV_CMD_REQUEST_CAMERA_SETTINGS",
+          "value": 522,
+          "description": "Request camera settings (CAMERA_SETTINGS)."
+        },
+        {
+          "name": "MAV_CMD_REQUEST_STORAGE_INFORMATION",
+          "value": 525,
+          "description": "Request storage information (STORAGE_INFORMATION). Use the command's target_component to target a specific component's storage."
+        },
+        {
+          "name": "MAV_CMD_STORAGE_FORMAT",
+          "value": 526,
+          "description": "Format a storage medium. Once format is complete, a STORAGE_INFORMATION message is sent. Use the command's target_component to target a specific component's storage."
+        },
+        {
+          "name": "MAV_CMD_REQUEST_CAMERA_CAPTURE_STATUS",
+          "value": 527,
+          "description": "Request camera capture status (CAMERA_CAPTURE_STATUS)"
+        },
+        {
+          "name": "MAV_CMD_REQUEST_FLIGHT_INFORMATION",
+          "value": 528,
+          "description": "Request flight information (FLIGHT_INFORMATION)"
+        },
+        {
+          "name": "MAV_CMD_RESET_CAMERA_SETTINGS",
+          "value": 529,
+          "description": "Reset all camera settings to Factory Default"
+        },
+        {
+          "name": "MAV_CMD_SET_CAMERA_MODE",
+          "value": 530,
+          "description": "Set camera running mode. Use NaN for reserved values. GCS will send a MAV_CMD_REQUEST_VIDEO_STREAM_STATUS command after a mode change if the camera supports video streaming."
+        },
+        {
+          "name": "MAV_CMD_SET_CAMERA_ZOOM",
+          "value": 531,
+          "description": "Set camera zoom. Camera must respond with a CAMERA_SETTINGS message (on success)."
+        },
+        {
+          "name": "MAV_CMD_SET_CAMERA_FOCUS",
+          "value": 532,
+          "description": "Set camera focus. Camera must respond with a CAMERA_SETTINGS message (on success)."
+        },
+        {
+          "name": "MAV_CMD_SET_STORAGE_USAGE",
+          "value": 533,
+          "description": "Set that a particular storage is the preferred location for saving photos, videos, and/or other media (e.g. to set that an SD card is used for storing videos).\n          There can only be one preferred save location for each particular media type: setting a media usage flag will clear/reset that same flag if set on any other storage.\n          If no flag is set the system should use its default storage.\n          A target system can choose to always use default storage, in which case it should ACK the command with MAV_RESULT_UNSUPPORTED.\n          A target system can choose to not allow a particular storage to be set as preferred storage, in which case it should ACK the command with MAV_RESULT_DENIED."
+        },
+        {
+          "name": "MAV_CMD_SET_CAMERA_SOURCE",
+          "value": 534,
+          "description": "Set camera source. Changes the camera's active sources on cameras with multiple image sensors."
+        },
+        {
+          "name": "MAV_CMD_JUMP_TAG",
+          "value": 600,
+          "description": "Tagged jump target. Can be jumped to with MAV_CMD_DO_JUMP_TAG."
+        },
+        {
+          "name": "MAV_CMD_DO_JUMP_TAG",
+          "value": 601,
+          "description": "Jump to the matching tag in the mission list. Repeat this action for the specified number of times. A mission should contain a single matching tag for each jump. If this is not the case then a jump to a missing tag should complete the mission, and a jump where there are multiple matching tags should always select the one with the lowest mission sequence number."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_GLOBAL_ORIGIN",
+          "value": 611,
+          "description": "Sets the GNSS coordinates of the vehicle local origin (0,0,0) position.\n          Vehicle should emit GPS_GLOBAL_ORIGIN irrespective of whether the origin is changed.\n          This enables transform between the local coordinate frame and the global (GNSS) coordinate frame, which may be necessary when (for example) indoor and outdoor settings are connected and the MAV should move from in- to outdoor.\n          This command supersedes SET_GPS_GLOBAL_ORIGIN.\n          Should be sent in a COMMAND_INT (Expected frame is MAV_FRAME_GLOBAL, and this should be assumed when sent in COMMAND_LONG)."
+        },
+        {
+          "name": "MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW",
+          "value": 1000,
+          "description": "Set gimbal manager pitch/yaw setpoints (low rate command). It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: only the gimbal manager will react to this command - it will be ignored by a gimbal device. Use GIMBAL_MANAGER_SET_PITCHYAW if you need to stream pitch/yaw setpoints at higher rate."
+        },
+        {
+          "name": "MAV_CMD_DO_GIMBAL_MANAGER_CONFIGURE",
+          "value": 1001,
+          "description": "Gimbal configuration to set which sysid/compid is in primary and secondary control."
+        },
+        {
+          "name": "MAV_CMD_IMAGE_START_CAPTURE",
+          "value": 2000,
+          "description": "Start image capture sequence. CAMERA_IMAGE_CAPTURED must be emitted after each capture.\n\n          Param1 (id) may be used to specify the target camera: 0: all cameras, 1 to 6: autopilot-connected cameras, 7-255: MAVLink camera component ID.\n          It is needed in order to target specific cameras connected to the autopilot, or specific sensors in a multi-sensor camera (neither of which have a distinct MAVLink component ID).\n          It is also needed to specify the target camera in missions.\n\n          When used in a mission, an autopilot should execute the MAV_CMD for a specified local camera (param1 = 1-6), or resend it as a command if it is intended for a MAVLink camera (param1 = 7 - 255), setting the command's target_component as the param1 value (and setting param1 in the command to zero).\n          If the param1 is 0 the autopilot should do both.\n\n          When sent in a command the target MAVLink address is set using target_component.\n          If addressed specifically to an autopilot: param1 should be used in the same way as it is for missions (though command should NACK with MAV_RESULT_DENIED if a specified local camera does not exist).\n          If addressed to a MAVLink camera, param 1 can be used to address all cameras (0), or to separately address 1 to 7 individual sensors. Other values should be NACKed with MAV_RESULT_DENIED.\n          If the command is broadcast (target_component is 0) then param 1 should be set to 0 (any other value should be NACKED with MAV_RESULT_DENIED). An autopilot would trigger any local cameras and forward the command to all channels."
+        },
+        {
+          "name": "MAV_CMD_IMAGE_STOP_CAPTURE",
+          "value": 2001,
+          "description": "Stop image capture sequence.\n\n          Param1 (id) may be used to specify the target camera: 0: all cameras, 1 to 6: autopilot-connected cameras, 7-255: MAVLink camera component ID.\n          It is needed in order to target specific cameras connected to the autopilot, or specific sensors in a multi-sensor camera (neither of which have a distinct MAVLink component ID).\n          It is also needed to specify the target camera in missions.\n\n          When used in a mission, an autopilot should execute the MAV_CMD for a specified local camera (param1 = 1-6), or resend it as a command if it is intended for a MAVLink camera (param1 = 7 - 255), setting the command's target_component as the param1 value (and setting param1 in the command to zero).\n          If the param1 is 0 the autopilot should do both.\n\n          When sent in a command the target MAVLink address is set using target_component.\n          If addressed specifically to an autopilot: param1 should be used in the same way as it is for missions (though command should NACK with MAV_RESULT_DENIED if a specified local camera does not exist).\n          If addressed to a MAVLink camera, param1 can be used to address all cameras (0), or to separately address 1 to 7 individual sensors. Other values should be NACKed with MAV_RESULT_DENIED.\n          If the command is broadcast (target_component is 0) then param 1 should be set to 0 (any other value should be NACKED with MAV_RESULT_DENIED). An autopilot would trigger any local cameras and forward the command to all channels."
+        },
+        {
+          "name": "MAV_CMD_REQUEST_CAMERA_IMAGE_CAPTURE",
+          "value": 2002,
+          "description": "Re-request a CAMERA_IMAGE_CAPTURED message."
+        },
+        {
+          "name": "MAV_CMD_DO_TRIGGER_CONTROL",
+          "value": 2003,
+          "description": "Enable or disable on-board camera triggering system."
+        },
+        {
+          "name": "MAV_CMD_CAMERA_TRACK_POINT",
+          "value": 2004,
+          "description": "If the camera supports point visual tracking (CAMERA_CAP_FLAGS_HAS_TRACKING_POINT is set), this command allows to initiate the tracking."
+        },
+        {
+          "name": "MAV_CMD_CAMERA_TRACK_RECTANGLE",
+          "value": 2005,
+          "description": "If the camera supports rectangle visual tracking (CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE is set), this command allows to initiate the tracking."
+        },
+        {
+          "name": "MAV_CMD_CAMERA_STOP_TRACKING",
+          "value": 2010,
+          "description": "Stops ongoing tracking."
+        },
+        {
+          "name": "MAV_CMD_VIDEO_START_CAPTURE",
+          "value": 2500,
+          "description": "Starts video capture (recording)."
+        },
+        {
+          "name": "MAV_CMD_VIDEO_STOP_CAPTURE",
+          "value": 2501,
+          "description": "Stop the current video capture (recording)."
+        },
+        {
+          "name": "MAV_CMD_VIDEO_START_STREAMING",
+          "value": 2502,
+          "description": "Start video streaming"
+        },
+        {
+          "name": "MAV_CMD_VIDEO_STOP_STREAMING",
+          "value": 2503,
+          "description": "Stop the given video stream"
+        },
+        {
+          "name": "MAV_CMD_REQUEST_VIDEO_STREAM_INFORMATION",
+          "value": 2504,
+          "description": "Request video stream information (VIDEO_STREAM_INFORMATION)"
+        },
+        {
+          "name": "MAV_CMD_REQUEST_VIDEO_STREAM_STATUS",
+          "value": 2505,
+          "description": "Request video stream status (VIDEO_STREAM_STATUS)"
+        },
+        {
+          "name": "MAV_CMD_LOGGING_START",
+          "value": 2510,
+          "description": "Request to start streaming logging data over MAVLink (see also LOGGING_DATA message)"
+        },
+        {
+          "name": "MAV_CMD_LOGGING_STOP",
+          "value": 2511,
+          "description": "Request to stop streaming log data over MAVLink"
+        },
+        {
+          "name": "MAV_CMD_AIRFRAME_CONFIGURATION",
+          "value": 2520,
+          "description": ""
+        },
+        {
+          "name": "MAV_CMD_CONTROL_HIGH_LATENCY",
+          "value": 2600,
+          "description": "Request to start/stop transmitting over the high latency telemetry"
+        },
+        {
+          "name": "MAV_CMD_PANORAMA_CREATE",
+          "value": 2800,
+          "description": "Create a panorama at the current position"
+        },
+        {
+          "name": "MAV_CMD_DO_VTOL_TRANSITION",
+          "value": 3000,
+          "description": "Request VTOL transition"
+        },
+        {
+          "name": "MAV_CMD_ARM_AUTHORIZATION_REQUEST",
+          "value": 3001,
+          "description": "Request authorization to arm the vehicle to a external entity, the arm authorizer is responsible to request all data that is needs from the vehicle before authorize or deny the request.\n\t\tIf approved the COMMAND_ACK message progress field should be set with period of time that this authorization is valid in seconds.\n\t\tIf the authorization is denied COMMAND_ACK.result_param2 should be set with one of the reasons in MAV_ARM_AUTH_DENIED_REASON."
+        },
+        {
+          "name": "MAV_CMD_SET_GUIDED_SUBMODE_STANDARD",
+          "value": 4000,
+          "description": "This command sets the submode to standard guided when vehicle is in guided mode. The vehicle holds position and altitude and the user can input the desired velocities along all three axes."
+        },
+        {
+          "name": "MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE",
+          "value": 4001,
+          "description": "This command sets submode circle when vehicle is in guided mode. Vehicle flies along a circle facing the center of the circle. The user can input the velocity along the circle and change the radius. If no input is given the vehicle will hold position."
+        },
+        {
+          "name": "MAV_CMD_CONDITION_GATE",
+          "value": 4501,
+          "description": "Delay mission state machine until gate has been reached."
+        },
+        {
+          "name": "MAV_CMD_NAV_FENCE_RETURN_POINT",
+          "value": 5000,
+          "description": "Fence return point (there can only be one such point in a geofence definition). If rally points are supported they should be used instead."
+        },
+        {
+          "name": "MAV_CMD_NAV_FENCE_POLYGON_VERTEX_INCLUSION",
+          "value": 5001,
+          "description": "Fence vertex for an inclusion polygon (the polygon must not be self-intersecting). The vehicle must stay within this area. Minimum of 3 vertices required.\n          The vertices for a polygon must be sent sequentially, each with param1 set to the total number of vertices in the polygon."
+        },
+        {
+          "name": "MAV_CMD_NAV_FENCE_POLYGON_VERTEX_EXCLUSION",
+          "value": 5002,
+          "description": "Fence vertex for an exclusion polygon (the polygon must not be self-intersecting). The vehicle must stay outside this area. Minimum of 3 vertices required.\n          The vertices for a polygon must be sent sequentially, each with param1 set to the total number of vertices in the polygon."
+        },
+        {
+          "name": "MAV_CMD_NAV_FENCE_CIRCLE_INCLUSION",
+          "value": 5003,
+          "description": "Circular fence area. The vehicle must stay inside this area."
+        },
+        {
+          "name": "MAV_CMD_NAV_FENCE_CIRCLE_EXCLUSION",
+          "value": 5004,
+          "description": "Circular fence area. The vehicle must stay outside this area."
+        },
+        {
+          "name": "MAV_CMD_NAV_RALLY_POINT",
+          "value": 5100,
+          "description": "Rally point. You can have multiple rally points defined."
+        },
+        {
+          "name": "MAV_CMD_UAVCAN_GET_NODE_INFO",
+          "value": 5200,
+          "description": "Commands the vehicle to respond with a sequence of messages UAVCAN_NODE_INFO, one message per every UAVCAN node that is online. Note that some of the response messages can be lost, which the receiver can detect easily by checking whether every received UAVCAN_NODE_STATUS has a matching message UAVCAN_NODE_INFO received earlier; if not, this command should be sent again in order to request re-transmission of the node information messages."
+        },
+        {
+          "name": "MAV_CMD_DO_SET_SAFETY_SWITCH_STATE",
+          "value": 5300,
+          "description": "Change state of safety switch."
+        },
+        {
+          "name": "MAV_CMD_DO_ADSB_OUT_IDENT",
+          "value": 10001,
+          "description": "Trigger the start of an ADSB-out IDENT. This should only be used when requested to do so by an Air Traffic Controller in controlled airspace. This starts the IDENT which is then typically held for 18 seconds by the hardware per the Mode A, C, and S transponder spec."
+        },
+        {
+          "name": "MAV_CMD_PAYLOAD_PREPARE_DEPLOY",
+          "value": 30001,
+          "description": "Deploy payload on a Lat / Lon / Alt position. This includes the navigation to reach the required release position and velocity."
+        },
+        {
+          "name": "MAV_CMD_PAYLOAD_CONTROL_DEPLOY",
+          "value": 30002,
+          "description": "Control the payload deployment."
+        },
+        {
+          "name": "MAV_CMD_FIXED_MAG_CAL_YAW",
+          "value": 42006,
+          "description": "Magnetometer calibration based on provided known yaw. This allows for fast calibration using WMM field tables in the vehicle, given only the known yaw of the vehicle. If Latitude and longitude are both zero then use the current vehicle location."
+        },
+        {
+          "name": "MAV_CMD_DO_WINCH",
+          "value": 42600,
+          "description": "Command to operate winch."
+        },
+        {
+          "name": "MAV_CMD_GUIDED_CHANGE_SPEED",
+          "value": 43000,
+          "description": "Change flight speed at a given rate. This slews the vehicle at a controllable rate between it's previous speed and the new one."
+        },
+        {
+          "name": "MAV_CMD_GUIDED_CHANGE_ALTITUDE",
+          "value": 43001,
+          "description": "Change target altitude at a given rate. This slews the vehicle at a controllable rate between it's previous altitude and the new one."
+        },
+        {
+          "name": "MAV_CMD_GUIDED_CHANGE_HEADING",
+          "value": 43002,
+          "description": "Change to target direction at a given rate, overriding previous heading/s. This slews the vehicle at a controllable rate between its previous heading and the new one."
+        },
+        {
+          "name": "MAV_CMD_EXTERNAL_POSITION_ESTIMATE",
+          "value": 43003,
+          "description": "Provide an external position estimate for use when dead-reckoning. This is meant to be used for occasional position resets that may be provided by a external system such as a remote pilot using landmarks over a video link."
+        },
+        {
+          "name": "MAV_CMD_EXTERNAL_WIND_ESTIMATE",
+          "value": 43004,
+          "description": "Set an external estimate of wind direction and speed.\n          This might be used to provide an initial wind estimate to the estimator (EKF) in the case where the vehicle is wind dead-reckoning, extending the time when operating without GPS before position drift builds to an unsafe level. For this use case the command might reasonably be sent every few minutes when operating at altitude, and the value is cleared if the estimator resets itself."
+        },
+        {
+          "name": "MAV_CMD_WAYPOINT_USER_1",
+          "value": 31000,
+          "description": "User defined waypoint item. Ground Station will show the Vehicle as flying through this item."
+        },
+        {
+          "name": "MAV_CMD_WAYPOINT_USER_2",
+          "value": 31001,
+          "description": "User defined waypoint item. Ground Station will show the Vehicle as flying through this item."
+        },
+        {
+          "name": "MAV_CMD_WAYPOINT_USER_3",
+          "value": 31002,
+          "description": "User defined waypoint item. Ground Station will show the Vehicle as flying through this item."
+        },
+        {
+          "name": "MAV_CMD_WAYPOINT_USER_4",
+          "value": 31003,
+          "description": "User defined waypoint item. Ground Station will show the Vehicle as flying through this item."
+        },
+        {
+          "name": "MAV_CMD_WAYPOINT_USER_5",
+          "value": 31004,
+          "description": "User defined waypoint item. Ground Station will show the Vehicle as flying through this item."
+        },
+        {
+          "name": "MAV_CMD_SPATIAL_USER_1",
+          "value": 31005,
+          "description": "User defined spatial item. Ground Station will not show the Vehicle as flying through this item. Example: ROI item."
+        },
+        {
+          "name": "MAV_CMD_SPATIAL_USER_2",
+          "value": 31006,
+          "description": "User defined spatial item. Ground Station will not show the Vehicle as flying through this item. Example: ROI item."
+        },
+        {
+          "name": "MAV_CMD_SPATIAL_USER_3",
+          "value": 31007,
+          "description": "User defined spatial item. Ground Station will not show the Vehicle as flying through this item. Example: ROI item."
+        },
+        {
+          "name": "MAV_CMD_SPATIAL_USER_4",
+          "value": 31008,
+          "description": "User defined spatial item. Ground Station will not show the Vehicle as flying through this item. Example: ROI item."
+        },
+        {
+          "name": "MAV_CMD_SPATIAL_USER_5",
+          "value": 31009,
+          "description": "User defined spatial item. Ground Station will not show the Vehicle as flying through this item. Example: ROI item."
+        },
+        {
+          "name": "MAV_CMD_USER_1",
+          "value": 31010,
+          "description": "User defined command. Ground Station will not show the Vehicle as flying through this item. Example: MAV_CMD_DO_SET_PARAMETER item."
+        },
+        {
+          "name": "MAV_CMD_USER_2",
+          "value": 31011,
+          "description": "User defined command. Ground Station will not show the Vehicle as flying through this item. Example: MAV_CMD_DO_SET_PARAMETER item."
+        },
+        {
+          "name": "MAV_CMD_USER_3",
+          "value": 31012,
+          "description": "User defined command. Ground Station will not show the Vehicle as flying through this item. Example: MAV_CMD_DO_SET_PARAMETER item."
+        },
+        {
+          "name": "MAV_CMD_USER_4",
+          "value": 31013,
+          "description": "User defined command. Ground Station will not show the Vehicle as flying through this item. Example: MAV_CMD_DO_SET_PARAMETER item."
+        },
+        {
+          "name": "MAV_CMD_USER_5",
+          "value": 31014,
+          "description": "User defined command. Ground Station will not show the Vehicle as flying through this item. Example: MAV_CMD_DO_SET_PARAMETER item."
+        },
+        {
+          "name": "MAV_CMD_CAN_FORWARD",
+          "value": 32000,
+          "description": "Request forwarding of CAN packets from the given CAN bus to this component via this MAVLink channel. CAN Frames are sent using CAN_FRAME and CANFD_FRAME messages"
+        }
+      ],
+      "isBitmask": false
+    },
+    {
+      "name": "MAV_PARAM_TYPE",
+      "description": "Specifies the datatype of a MAVLink parameter.",
+      "entries": [
+        {
+          "name": "MAV_PARAM_TYPE_UINT8",
+          "value": 1,
+          "description": "8-bit unsigned integer"
+        },
+        {
+          "name": "MAV_PARAM_TYPE_INT8",
+          "value": 2,
+          "description": "8-bit signed integer"
+        },
+        {
+          "name": "MAV_PARAM_TYPE_UINT16",
+          "value": 3,
+          "description": "16-bit unsigned integer"
+        },
+        {
+          "name": "MAV_PARAM_TYPE_INT16",
+          "value": 4,
+          "description": "16-bit signed integer"
+        },
+        {
+          "name": "MAV_PARAM_TYPE_UINT32",
+          "value": 5,
+          "description": "32-bit unsigned integer"
+        },
+        {
+          "name": "MAV_PARAM_TYPE_INT32",
+          "value": 6,
+          "description": "32-bit signed integer"
+        },
+        {
+          "name": "MAV_PARAM_TYPE_UINT64",
+          "value": 7,
+          "description": "64-bit unsigned integer"
+        },
+        {
+          "name": "MAV_PARAM_TYPE_INT64",
+          "value": 8,
+          "description": "64-bit signed integer"
+        },
+        {
+          "name": "MAV_PARAM_TYPE_REAL32",
+          "value": 9,
+          "description": "32-bit floating-point"
+        },
+        {
+          "name": "MAV_PARAM_TYPE_REAL64",
+          "value": 10,
+          "description": "64-bit floating-point"
+        }
+      ],
+      "isBitmask": false
+    },
+    {
+      "name": "MAV_POWER_STATUS",
+      "description": "Power supply status flags (bitmask)",
+      "entries": [
+        {
+          "name": "MAV_POWER_STATUS_BRICK_VALID",
+          "value": 1,
+          "description": "main brick power supply valid"
+        },
+        {
+          "name": "MAV_POWER_STATUS_SERVO_VALID",
+          "value": 2,
+          "description": "main servo power supply valid for FMU"
+        },
+        {
+          "name": "MAV_POWER_STATUS_USB_CONNECTED",
+          "value": 4,
+          "description": "USB power is connected"
+        },
+        {
+          "name": "MAV_POWER_STATUS_PERIPH_OVERCURRENT",
+          "value": 8,
+          "description": "peripheral supply is in over-current state"
+        },
+        {
+          "name": "MAV_POWER_STATUS_PERIPH_HIPOWER_OVERCURRENT",
+          "value": 16,
+          "description": "hi-power peripheral supply is in over-current state"
+        },
+        {
+          "name": "MAV_POWER_STATUS_CHANGED",
+          "value": 32,
+          "description": "Power status has changed since boot"
+        }
+      ],
+      "isBitmask": true
+    },
+    {
+      "name": "MAV_MISSION_TYPE",
+      "description": "Type of mission items being requested/sent in mission protocol.",
+      "entries": [
+        {
+          "name": "MAV_MISSION_TYPE_MISSION",
+          "value": 0,
+          "description": "Items are mission commands for main mission."
+        },
+        {
+          "name": "MAV_MISSION_TYPE_FENCE",
+          "value": 1,
+          "description": "Specifies GeoFence area(s). Items are MAV_CMD_NAV_FENCE_ GeoFence items."
+        },
+        {
+          "name": "MAV_MISSION_TYPE_RALLY",
+          "value": 2,
+          "description": "Specifies the rally points for the vehicle. Rally points are alternative RTL points. Items are MAV_CMD_NAV_RALLY_POINT rally point items."
+        },
+        {
+          "name": "MAV_MISSION_TYPE_ALL",
+          "value": 255,
+          "description": "Only used in MISSION_CLEAR_ALL to clear all mission types."
+        }
+      ],
+      "isBitmask": false
+    },
+    {
+      "name": "MAV_AUTOPILOT",
+      "description": "Micro air vehicle / autopilot classes. This identifies the individual model.",
+      "entries": [
+        {
+          "name": "MAV_AUTOPILOT_GENERIC",
+          "value": 0,
+          "description": "Generic autopilot, full support for everything"
+        },
+        {
+          "name": "MAV_AUTOPILOT_RESERVED",
+          "value": 1,
+          "description": "Reserved for future use."
+        },
+        {
+          "name": "MAV_AUTOPILOT_SLUGS",
+          "value": 2,
+          "description": "SLUGS autopilot, http://slugsuav.soe.ucsc.edu"
+        },
+        {
+          "name": "MAV_AUTOPILOT_ARDUPILOTMEGA",
+          "value": 3,
+          "description": "ArduPilot - Plane/Copter/Rover/Sub/Tracker, https://ardupilot.org"
+        },
+        {
+          "name": "MAV_AUTOPILOT_OPENPILOT",
+          "value": 4,
+          "description": "OpenPilot, http://openpilot.org"
+        },
+        {
+          "name": "MAV_AUTOPILOT_GENERIC_WAYPOINTS_ONLY",
+          "value": 5,
+          "description": "Generic autopilot only supporting simple waypoints"
+        },
+        {
+          "name": "MAV_AUTOPILOT_GENERIC_WAYPOINTS_AND_SIMPLE_NAVIGATION_ONLY",
+          "value": 6,
+          "description": "Generic autopilot supporting waypoints and other simple navigation commands"
+        },
+        {
+          "name": "MAV_AUTOPILOT_GENERIC_MISSION_FULL",
+          "value": 7,
+          "description": "Generic autopilot supporting the full mission command set"
+        },
+        {
+          "name": "MAV_AUTOPILOT_INVALID",
+          "value": 8,
+          "description": "No valid autopilot, e.g. a GCS or other MAVLink component"
+        },
+        {
+          "name": "MAV_AUTOPILOT_PPZ",
+          "value": 9,
+          "description": "PPZ UAV - http://nongnu.org/paparazzi"
+        },
+        {
+          "name": "MAV_AUTOPILOT_UDB",
+          "value": 10,
+          "description": "UAV Dev Board"
+        },
+        {
+          "name": "MAV_AUTOPILOT_FP",
+          "value": 11,
+          "description": "FlexiPilot"
+        },
+        {
+          "name": "MAV_AUTOPILOT_PX4",
+          "value": 12,
+          "description": "PX4 Autopilot - http://px4.io/"
+        },
+        {
+          "name": "MAV_AUTOPILOT_SMACCMPILOT",
+          "value": 13,
+          "description": "SMACCMPilot - http://smaccmpilot.org"
+        },
+        {
+          "name": "MAV_AUTOPILOT_AUTOQUAD",
+          "value": 14,
+          "description": "AutoQuad -- http://autoquad.org"
+        },
+        {
+          "name": "MAV_AUTOPILOT_ARMAZILA",
+          "value": 15,
+          "description": "Armazila -- http://armazila.com"
+        },
+        {
+          "name": "MAV_AUTOPILOT_AEROB",
+          "value": 16,
+          "description": "Aerob -- http://aerob.ru"
+        },
+        {
+          "name": "MAV_AUTOPILOT_ASLUAV",
+          "value": 17,
+          "description": "ASLUAV autopilot -- http://www.asl.ethz.ch"
+        },
+        {
+          "name": "MAV_AUTOPILOT_SMARTAP",
+          "value": 18,
+          "description": "SmartAP Autopilot - http://sky-drones.com"
+        },
+        {
+          "name": "MAV_AUTOPILOT_AIRRAILS",
+          "value": 19,
+          "description": "AirRails - http://uaventure.com"
+        },
+        {
+          "name": "MAV_AUTOPILOT_REFLEX",
+          "value": 20,
+          "description": "Fusion Reflex - https://fusion.engineering"
+        },
+        {
+          "name": "MAV_AUTOPILOT_FLIX",
+          "value": 21,
+          "description": "Flix quadcopter - https://quadcopter.dev"
+        }
+      ],
+      "isBitmask": false
+    },
+    {
+      "name": "MAV_TYPE",
+      "description": "MAVLINK component type reported in HEARTBEAT message. Flight controllers must report the type of the vehicle on which they are mounted (e.g. MAV_TYPE_OCTOROTOR). All other components must report a value appropriate for their type (e.g. a camera must use MAV_TYPE_CAMERA).",
+      "entries": [
+        {
+          "name": "MAV_TYPE_GENERIC",
+          "value": 0,
+          "description": "Generic micro air vehicle"
+        },
+        {
+          "name": "MAV_TYPE_FIXED_WING",
+          "value": 1,
+          "description": "Fixed wing aircraft."
+        },
+        {
+          "name": "MAV_TYPE_QUADROTOR",
+          "value": 2,
+          "description": "Quadrotor"
+        },
+        {
+          "name": "MAV_TYPE_COAXIAL",
+          "value": 3,
+          "description": "Coaxial helicopter"
+        },
+        {
+          "name": "MAV_TYPE_HELICOPTER",
+          "value": 4,
+          "description": "Normal helicopter with tail rotor."
+        },
+        {
+          "name": "MAV_TYPE_ANTENNA_TRACKER",
+          "value": 5,
+          "description": "Ground installation"
+        },
+        {
+          "name": "MAV_TYPE_GCS",
+          "value": 6,
+          "description": "Operator control unit / ground control station"
+        },
+        {
+          "name": "MAV_TYPE_AIRSHIP",
+          "value": 7,
+          "description": "Airship, controlled"
+        },
+        {
+          "name": "MAV_TYPE_FREE_BALLOON",
+          "value": 8,
+          "description": "Free balloon, uncontrolled"
+        },
+        {
+          "name": "MAV_TYPE_ROCKET",
+          "value": 9,
+          "description": "Rocket"
+        },
+        {
+          "name": "MAV_TYPE_GROUND_ROVER",
+          "value": 10,
+          "description": "Ground rover"
+        },
+        {
+          "name": "MAV_TYPE_SURFACE_BOAT",
+          "value": 11,
+          "description": "Surface vessel, boat, ship"
+        },
+        {
+          "name": "MAV_TYPE_SUBMARINE",
+          "value": 12,
+          "description": "Submarine"
+        },
+        {
+          "name": "MAV_TYPE_HEXAROTOR",
+          "value": 13,
+          "description": "Hexarotor"
+        },
+        {
+          "name": "MAV_TYPE_OCTOROTOR",
+          "value": 14,
+          "description": "Octorotor"
+        },
+        {
+          "name": "MAV_TYPE_TRICOPTER",
+          "value": 15,
+          "description": "Tricopter"
+        },
+        {
+          "name": "MAV_TYPE_FLAPPING_WING",
+          "value": 16,
+          "description": "Flapping wing"
+        },
+        {
+          "name": "MAV_TYPE_KITE",
+          "value": 17,
+          "description": "Kite"
+        },
+        {
+          "name": "MAV_TYPE_ONBOARD_CONTROLLER",
+          "value": 18,
+          "description": "Onboard companion controller"
+        },
+        {
+          "name": "MAV_TYPE_VTOL_TAILSITTER_DUOROTOR",
+          "value": 19,
+          "description": "Two-rotor Tailsitter VTOL that additionally uses control surfaces in vertical operation. Note, value previously named MAV_TYPE_VTOL_DUOROTOR."
+        },
+        {
+          "name": "MAV_TYPE_VTOL_TAILSITTER_QUADROTOR",
+          "value": 20,
+          "description": "Quad-rotor Tailsitter VTOL using a V-shaped quad config in vertical operation. Note: value previously named MAV_TYPE_VTOL_QUADROTOR."
+        },
+        {
+          "name": "MAV_TYPE_VTOL_TILTROTOR",
+          "value": 21,
+          "description": "Tiltrotor VTOL. Fuselage and wings stay (nominally) horizontal in all flight phases. It able to tilt (some) rotors to provide thrust in cruise flight."
+        },
+        {
+          "name": "MAV_TYPE_VTOL_FIXEDROTOR",
+          "value": 22,
+          "description": "VTOL with separate fixed rotors for hover and cruise flight. Fuselage and wings stay (nominally) horizontal in all flight phases."
+        },
+        {
+          "name": "MAV_TYPE_VTOL_TAILSITTER",
+          "value": 23,
+          "description": "Tailsitter VTOL. Fuselage and wings orientation changes depending on flight phase: vertical for hover, horizontal for cruise. Use more specific VTOL MAV_TYPE_VTOL_TAILSITTER_DUOROTOR or MAV_TYPE_VTOL_TAILSITTER_QUADROTOR if appropriate."
+        },
+        {
+          "name": "MAV_TYPE_VTOL_TILTWING",
+          "value": 24,
+          "description": "Tiltwing VTOL. Fuselage stays horizontal in all flight phases. The whole wing, along with any attached engine, can tilt between vertical and horizontal mode."
+        },
+        {
+          "name": "MAV_TYPE_VTOL_RESERVED5",
+          "value": 25,
+          "description": "VTOL reserved 5"
+        },
+        {
+          "name": "MAV_TYPE_GIMBAL",
+          "value": 26,
+          "description": "Gimbal"
+        },
+        {
+          "name": "MAV_TYPE_ADSB",
+          "value": 27,
+          "description": "ADSB system"
+        },
+        {
+          "name": "MAV_TYPE_PARAFOIL",
+          "value": 28,
+          "description": "Steerable, nonrigid airfoil"
+        },
+        {
+          "name": "MAV_TYPE_DODECAROTOR",
+          "value": 29,
+          "description": "Dodecarotor"
+        },
+        {
+          "name": "MAV_TYPE_CAMERA",
+          "value": 30,
+          "description": "Camera"
+        },
+        {
+          "name": "MAV_TYPE_CHARGING_STATION",
+          "value": 31,
+          "description": "Charging station"
+        },
+        {
+          "name": "MAV_TYPE_FLARM",
+          "value": 32,
+          "description": "FLARM collision avoidance system"
+        },
+        {
+          "name": "MAV_TYPE_SERVO",
+          "value": 33,
+          "description": "Servo"
+        },
+        {
+          "name": "MAV_TYPE_ODID",
+          "value": 34,
+          "description": "Open Drone ID. See https://mavlink.io/en/services/opendroneid.html."
+        },
+        {
+          "name": "MAV_TYPE_DECAROTOR",
+          "value": 35,
+          "description": "Decarotor"
+        },
+        {
+          "name": "MAV_TYPE_BATTERY",
+          "value": 36,
+          "description": "Battery"
+        },
+        {
+          "name": "MAV_TYPE_PARACHUTE",
+          "value": 37,
+          "description": "Parachute"
+        },
+        {
+          "name": "MAV_TYPE_LOG",
+          "value": 38,
+          "description": "Log"
+        },
+        {
+          "name": "MAV_TYPE_OSD",
+          "value": 39,
+          "description": "OSD"
+        },
+        {
+          "name": "MAV_TYPE_IMU",
+          "value": 40,
+          "description": "IMU"
+        },
+        {
+          "name": "MAV_TYPE_GPS",
+          "value": 41,
+          "description": "GPS"
+        },
+        {
+          "name": "MAV_TYPE_WINCH",
+          "value": 42,
+          "description": "Winch"
+        },
+        {
+          "name": "MAV_TYPE_GENERIC_MULTIROTOR",
+          "value": 43,
+          "description": "Generic multirotor that does not fit into a specific type or whose type is unknown"
+        },
+        {
+          "name": "MAV_TYPE_ILLUMINATOR",
+          "value": 44,
+          "description": "Illuminator. An illuminator is a light source that is used for lighting up dark areas external to the system: e.g. a torch or searchlight (as opposed to a light source for illuminating the system itself, e.g. an indicator light)."
+        },
+        {
+          "name": "MAV_TYPE_SPACECRAFT_ORBITER",
+          "value": 45,
+          "description": "Orbiter spacecraft. Includes satellites orbiting terrestrial and extra-terrestrial bodies. Follows NASA Spacecraft Classification."
+        },
+        {
+          "name": "MAV_TYPE_GROUND_QUADRUPED",
+          "value": 46,
+          "description": "A generic four-legged ground vehicle (e.g., a robot dog)."
+        },
+        {
+          "name": "MAV_TYPE_VTOL_GYRODYNE",
+          "value": 47,
+          "description": "VTOL hybrid of helicopter and autogyro. It has a main rotor for lift and separate propellers for forward flight. The rotor must be powered for hover but can autorotate in cruise flight. See: https://en.wikipedia.org/wiki/Gyrodyne"
+        },
+        {
+          "name": "MAV_TYPE_GRIPPER",
+          "value": 48,
+          "description": "Gripper"
+        },
+        {
+          "name": "MAV_TYPE_RADIO",
+          "value": 49,
+          "description": "Radio"
+        }
+      ],
+      "isBitmask": false
+    },
+    {
+      "name": "MAV_MODE_FLAG",
+      "description": "These flags encode the MAV mode, see MAV_MODE enum for useful combinations.",
+      "entries": [
+        {
+          "name": "MAV_MODE_FLAG_SAFETY_ARMED",
+          "value": 128,
+          "description": "0b10000000 MAV safety set to armed. Motors are enabled / running / can start. Ready to fly. Additional note: this flag is to be ignored when sent in the command MAV_CMD_DO_SET_MODE and MAV_CMD_COMPONENT_ARM_DISARM shall be used instead. The flag can still be used to report the armed state."
+        },
+        {
+          "name": "MAV_MODE_FLAG_MANUAL_INPUT_ENABLED",
+          "value": 64,
+          "description": "0b01000000 remote control input is enabled."
+        },
+        {
+          "name": "MAV_MODE_FLAG_HIL_ENABLED",
+          "value": 32,
+          "description": "0b00100000 hardware in the loop simulation. All motors / actuators are blocked, but internal software is full operational."
+        },
+        {
+          "name": "MAV_MODE_FLAG_STABILIZE_ENABLED",
+          "value": 16,
+          "description": "0b00010000 system stabilizes electronically its attitude (and optionally position). It needs however further control inputs to move around."
+        },
+        {
+          "name": "MAV_MODE_FLAG_GUIDED_ENABLED",
+          "value": 8,
+          "description": "0b00001000 guided mode enabled, system flies waypoints / mission items."
+        },
+        {
+          "name": "MAV_MODE_FLAG_AUTO_ENABLED",
+          "value": 4,
+          "description": "0b00000100 autonomous mode enabled, system finds its own goal positions. Guided flag can be set or not, depends on the actual implementation."
+        },
+        {
+          "name": "MAV_MODE_FLAG_TEST_ENABLED",
+          "value": 2,
+          "description": "0b00000010 system has a test mode enabled. This flag is intended for temporary system tests and should not be used for stable implementations."
+        },
+        {
+          "name": "MAV_MODE_FLAG_CUSTOM_MODE_ENABLED",
+          "value": 1,
+          "description": "0b00000001 system-specific custom mode is enabled. When using this flag to enable a custom mode all other flags should be ignored."
+        }
+      ],
+      "isBitmask": true
+    },
+    {
+      "name": "MAV_STATE",
+      "description": "",
+      "entries": [
+        {
+          "name": "MAV_STATE_UNINIT",
+          "value": 0,
+          "description": "Uninitialized system, state is unknown."
+        },
+        {
+          "name": "MAV_STATE_BOOT",
+          "value": 1,
+          "description": "System is booting up."
+        },
+        {
+          "name": "MAV_STATE_CALIBRATING",
+          "value": 2,
+          "description": "System is calibrating and not flight-ready."
+        },
+        {
+          "name": "MAV_STATE_STANDBY",
+          "value": 3,
+          "description": "System is grounded and on standby. It can be launched any time."
+        },
+        {
+          "name": "MAV_STATE_ACTIVE",
+          "value": 4,
+          "description": "System is active and might be already airborne. Motors are engaged."
+        },
+        {
+          "name": "MAV_STATE_CRITICAL",
+          "value": 5,
+          "description": "System is in a non-normal flight mode (failsafe). It can however still navigate."
+        },
+        {
+          "name": "MAV_STATE_EMERGENCY",
+          "value": 6,
+          "description": "System is in a non-normal flight mode (failsafe). It lost control over parts or over the whole airframe. It is in mayday and going down."
+        },
+        {
+          "name": "MAV_STATE_POWEROFF",
+          "value": 7,
+          "description": "System just initialized its power-down sequence, will shut down now."
+        },
+        {
+          "name": "MAV_STATE_FLIGHT_TERMINATION",
+          "value": 8,
+          "description": "System is terminating itself (failsafe or commanded)."
+        }
+      ],
+      "isBitmask": false
+    }
+  ]
+}
