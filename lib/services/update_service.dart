@@ -153,37 +153,81 @@ class UpdateService {
   /// The app will be replaced with the new version after exit.
   static Future<bool> installUpdate(String zipPath) async {
     try {
-      final appDir = Directory.current.path;
+      // Get the actual executable path (not current working directory)
+      final exePath = Platform.resolvedExecutable;
+      final appDir = path.dirname(exePath);
+      final exeName = path.basename(exePath);
+      
+      // Convert to Windows path format
+      final appDirWin = appDir.replaceAll('/', '\\');
+      final zipPathWin = zipPath.replaceAll('/', '\\');
+      final exePathWin = exePath.replaceAll('/', '\\');
+      
       final updateScript = path.join(Directory.systemTemp.path, 'mav-flow-update.bat');
+      final updateScriptWin = updateScript.replaceAll('/', '\\');
 
       // Create update batch script
+      // Uses tasklist to wait for the app to fully exit before replacing files
       final script = '''
 @echo off
-echo Updating MAV-Flow...
-timeout /t 2 /nobreak > nul
+chcp 65001 > nul
+echo ========================================
+echo   MAV-Flow Update in Progress...
+echo ========================================
+echo.
+echo Waiting for application to exit...
 
-:: Backup existing files (optional)
-:: move "$appDir" "$appDir.backup"
+:waitloop
+tasklist /FI "IMAGENAME eq $exeName" 2>NUL | find /I /N "$exeName" >NUL
+if "%ERRORLEVEL%"=="0" (
+    timeout /t 1 /nobreak > nul
+    goto waitloop
+)
 
-:: Extract ZIP (using PowerShell)
-powershell -Command "Expand-Archive -Path '$zipPath' -DestinationPath '$appDir' -Force"
+echo Application closed. Starting update...
+echo.
+echo Extracting files to: $appDirWin
+echo.
+
+:: Extract ZIP (using PowerShell) - overwrites existing files
+powershell -Command "Expand-Archive -Path '$zipPathWin' -DestinationPath '$appDirWin' -Force"
+
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo ERROR: Failed to extract update files!
+    echo Please manually extract: $zipPathWin
+    echo To: $appDirWin
+    pause
+    exit /b 1
+)
+
+echo.
+echo Update completed successfully!
+echo.
 
 :: Clean up temp files
-del "$zipPath"
-del "%~f0"
+del "$zipPathWin" 2>nul
 
-:: Restart app
-start "" "$appDir\\mav-flow.exe"
+:: Restart the application
+echo Restarting MAV-Flow...
+start "" "$exePathWin"
+
+:: Delete this script
+(goto) 2>nul & del "%~f0"
 ''';
 
       await File(updateScript).writeAsString(script);
 
-      // Run script (executes after app exits)
+      debugPrint('Update script created: $updateScript');
+      debugPrint('App directory: $appDir');
+      debugPrint('ZIP path: $zipPath');
+
+      // Run script in a new detached process
+      // The script will wait for this app to exit, then replace files and restart
       await Process.start(
         'cmd',
-        ['/c', updateScript],
+        ['/c', 'start', '', '/min', updateScriptWin],
         mode: ProcessStartMode.detached,
-        runInShell: true,
       );
 
       return true;
