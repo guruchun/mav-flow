@@ -27,16 +27,7 @@ Download `mav-flow-x.x.x-windows-x64.zip`, extract it, and run `mav-flow.exe`.
 
 ## Screen Layout
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  [Role ▼]  [Port ▼]  [Baud ▼]  [Connect]                [⚙]     │
-├───────────────────────────┬─────────────────────────────────────┤
-│       RX Data             │            TX Data                  │
-│  (Received messages)      │      (Edit & send messages)         │
-├───────────────────────────┴─────────────────────────────────────┤
-│  ● Connected | RX: 1234 | TX: 56 | 10.0 Hz | Role: GCS          │
-└─────────────────────────────────────────────────────────────────┘
-```
+<img src="docs/img/mav-flow.png" width="800" alt="Main Screen">
 
 ## Use Cases
 

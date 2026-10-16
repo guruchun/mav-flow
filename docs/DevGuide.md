@@ -26,6 +26,10 @@ github 웹사이트 또는 터미널에서 다음 명령을 수행한다.
 # 새로운 tag 정의
 git tag v1.y.z
 git push origin v1.y.z
+
+# 기존 tag 삭제
+git tag -d v1.0.4
+git push origin --delete v1.0.4
 ```
 
 ## manual release
