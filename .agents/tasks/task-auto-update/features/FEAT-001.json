@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Create the update model and GitHub API service for checking releases. This provides the backend infrastructure for the update system. Must be completed before FEAT-002 which depends on it.",
+  "status": "completed",
+  "steps": [
+    "Add dependencies to pubspec.yaml: package_info_plus ^8.0.0, http ^1.2.0, url_launcher ^6.2.0",
+    "Create lib/models/update_info.dart with UpdateInfo class containing: latestVersion (String), currentVersion (String), downloadUrl (String), releaseNotes (String), publishedAt (DateTime), and hasUpdate getter that compares versions using semantic versioning. Include a factory constructor UpdateInfo.fromGitHubRelease(Map<String, dynamic> json, String currentVersion) for parsing GitHub API response.",
+    "Create lib/services/update_service.dart as a static utility class (following mavlink_spec_loader.dart pattern) with: static const owner/repo fields (default 'user/mav-flow'), static Future<UpdateInfo?> checkForUpdates(String currentVersion) that calls GitHub API https://api.github.com/repos/{owner}/{repo}/releases/latest, parses response into UpdateInfo, handles errors gracefully (no internet returns null, API rate limit shows specific error, non-200 returns null with debug message). Include a private static helper _compareVersions(String v1, String v2) for semver comparison.",
+    "Add static method UpdateService.openDownloadPage(String url) that uses url_launcher to open the download URL in the default browser."
+  ],
+  "acceptance_criteria": [
+    "pubspec.yaml contains package_info_plus, http, and url_launcher dependencies",
+    "UpdateInfo class exists with all required fields and hasUpdate getter correctly compares semantic versions (e.g., 1.0.1 > 1.0.0, 2.0.0 > 1.9.9)",
+    "UpdateService.checkForUpdates() returns UpdateInfo when a newer version exists, null when up-to-date or on error",
+    "UpdateService.openDownloadPage() successfully opens URL via url_launcher"
+  ],
+  "verification": [
+    "Run 'flutter pub get' - dependencies install without errors",
+    "Run 'flutter analyze' - no errors in new files",
+    "Run 'flutter build windows --release' - builds successfully"
+  ],
+  "blocked_reason": null,
+  "findings": "Dependencies installed: package_info_plus ^8.0.0 (resolved to 8.3.1), http ^1.2.0 (resolved to 1.6.0), url_launcher ^6.2.0 (resolved to 6.3.3). UpdateService uses guruchun/mav-flow as default repo. UpdateInfo._compareVersions handles semver correctly including 'v' prefix stripping."
+}
