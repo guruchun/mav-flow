@@ -3,6 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import 'update_info.dart';
+import '../services/update_service.dart';
+
 /// App-wide settings with persistence
 ///
 /// Settings are stored in the app execution directory as app_settings.json
@@ -23,6 +26,54 @@ class AppSettings extends ChangeNotifier {
 
   void toggleTheme() {
     setThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
+  }
+
+  // ─── Update State ────────────────────────────────────────────
+
+  UpdateInfo? _updateInfo;
+  bool _isCheckingUpdate = false;
+  bool _updateDismissed = false;
+
+  /// 업데이트 정보 (null이면 아직 확인 안 됨)
+  UpdateInfo? get updateInfo => _updateInfo;
+
+  /// 업데이트 확인 중인지 여부
+  bool get isCheckingUpdate => _isCheckingUpdate;
+
+  /// 업데이트 알림이 닫혔는지 여부
+  bool get updateDismissed => _updateDismissed;
+
+  /// 업데이트가 가능한지 여부 (알림 표시용)
+  bool get hasAvailableUpdate =>
+      _updateInfo != null && _updateInfo!.hasUpdate && !_updateDismissed;
+
+  /// 업데이트를 확인합니다.
+  Future<void> checkForUpdates(String currentVersion) async {
+    if (_isCheckingUpdate) return;
+
+    _isCheckingUpdate = true;
+    notifyListeners();
+
+    try {
+      _updateInfo = await UpdateService.checkForUpdates(currentVersion);
+      _updateDismissed = false;
+    } finally {
+      _isCheckingUpdate = false;
+      notifyListeners();
+    }
+  }
+
+  /// 업데이트 알림을 닫습니다.
+  void dismissUpdate() {
+    _updateDismissed = true;
+    notifyListeners();
+  }
+
+  /// 업데이트 상태를 초기화합니다.
+  void resetUpdateState() {
+    _updateInfo = null;
+    _updateDismissed = false;
+    notifyListeners();
   }
 
   // ─── Persistence ─────────────────────────────────────────────

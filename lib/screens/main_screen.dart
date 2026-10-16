@@ -26,6 +26,8 @@ class MainScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // 업데이트 알림 배너
+          const _UpdateBanner(),
           _buildToolbar(context),
           const Expanded(
             child: Row(
@@ -61,6 +63,208 @@ class MainScreen extends StatelessWidget {
           _SettingsButton(),
         ],
       ),
+    );
+  }
+}
+
+/// 업데이트 알림 배너
+class _UpdateBanner extends StatelessWidget {
+  const _UpdateBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AppSettings>(
+      builder: (context, settings, child) {
+        if (!settings.hasAvailableUpdate) {
+          return const SizedBox.shrink();
+        }
+
+        final updateInfo = settings.updateInfo!;
+
+        return MaterialBanner(
+          backgroundColor: Colors.blue[700],
+          contentTextStyle: const TextStyle(color: Colors.white),
+          content: Text(
+            '새 버전이 있습니다: v${updateInfo.latestVersion} (현재: v${updateInfo.currentVersion})',
+          ),
+          leading: const Icon(Icons.system_update, color: Colors.white),
+          actions: [
+            TextButton(
+              onPressed: () => settings.dismissUpdate(),
+              child: const Text('나중에', style: TextStyle(color: Colors.white70)),
+            ),
+            TextButton(
+              onPressed: () => _showUpdateDialog(context, updateInfo),
+              child: const Text('업데이트', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showUpdateDialog(BuildContext context, UpdateInfo updateInfo) {
+    showDialog(
+      context: context,
+      builder: (context) => _UpdateDialog(updateInfo: updateInfo),
+    );
+  }
+}
+
+/// 업데이트 다이얼로그
+class _UpdateDialog extends StatefulWidget {
+  final UpdateInfo updateInfo;
+
+  const _UpdateDialog({required this.updateInfo});
+
+  @override
+  State<_UpdateDialog> createState() => _UpdateDialogState();
+}
+
+class _UpdateDialogState extends State<_UpdateDialog> {
+  bool _isDownloading = false;
+  double _downloadProgress = 0.0;
+  String? _errorMessage;
+
+  Future<void> _downloadAndInstall() async {
+    setState(() {
+      _isDownloading = true;
+      _downloadProgress = 0.0;
+      _errorMessage = null;
+    });
+
+    try {
+      // 다운로드
+      final zipPath = await UpdateService.downloadUpdate(
+        widget.updateInfo,
+        onProgress: (received, total) {
+          if (total > 0) {
+            setState(() {
+              _downloadProgress = received / total;
+            });
+          }
+        },
+      );
+
+      if (zipPath == null) {
+        setState(() {
+          _errorMessage = '다운로드에 실패했습니다.';
+          _isDownloading = false;
+        });
+        return;
+      }
+
+      // 설치 (앱 종료 필요)
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('업데이트 설치'),
+          content: const Text(
+            '업데이트를 설치하려면 앱을 재시작해야 합니다.\n계속하시겠습니까?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('취소'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('재시작'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed == true) {
+        final success = await UpdateService.installUpdate(zipPath);
+        if (success) {
+          // 앱 종료
+          exit(0);
+        } else {
+          setState(() {
+            _errorMessage = '설치에 실패했습니다.';
+            _isDownloading = false;
+          });
+        }
+      } else {
+        setState(() {
+          _isDownloading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = '오류: $e';
+        _isDownloading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('업데이트 v${widget.updateInfo.latestVersion}'),
+      content: SizedBox(
+        width: 400,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('현재 버전: v${widget.updateInfo.currentVersion}'),
+            const SizedBox(height: 8),
+            Text('새 버전: v${widget.updateInfo.latestVersion}'),
+            const SizedBox(height: 16),
+            if (widget.updateInfo.releaseNotes.isNotEmpty) ...[
+              const Text('변경 사항:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 150),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                padding: const EdgeInsets.all(8),
+                child: SingleChildScrollView(
+                  child: Text(
+                    widget.updateInfo.releaseNotes,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+            if (_isDownloading) ...[
+              const Text('다운로드 중...'),
+              const SizedBox(height: 8),
+              LinearProgressIndicator(value: _downloadProgress),
+              const SizedBox(height: 4),
+              Text('${(_downloadProgress * 100).toStringAsFixed(1)}%'),
+            ],
+            if (_errorMessage != null)
+              Text(
+                _errorMessage!,
+                style: const TextStyle(color: Colors.red),
+              ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isDownloading ? null : () => Navigator.of(context).pop(),
+          child: const Text('취소'),
+        ),
+        if (widget.updateInfo.zipDownloadUrl != null)
+          ElevatedButton(
+            onPressed: _isDownloading ? null : _downloadAndInstall,
+            child: const Text('다운로드 및 설치'),
+          )
+        else
+          ElevatedButton(
+            onPressed: _isDownloading
+                ? null
+                : () => UpdateService.openDownloadPage(widget.updateInfo.downloadUrl),
+            child: const Text('다운로드 페이지 열기'),
+          ),
+      ],
     );
   }
 }
@@ -553,67 +757,50 @@ class _UpdateCheckCard extends StatefulWidget {
 }
 
 class _UpdateCheckCardState extends State<_UpdateCheckCard> {
-  UpdateInfo? _updateInfo;
-  bool _isChecking = false;
   String? _errorMessage;
 
   Future<void> _checkForUpdates() async {
+    final settings = context.read<AppSettings>();
+    
     setState(() {
-      _isChecking = true;
       _errorMessage = null;
     });
 
-    try {
-      final result = await UpdateService.checkForUpdates(appVersion);
-      if (mounted) {
-        setState(() {
-          _updateInfo = result;
-          _isChecking = false;
-          if (result == null) {
-            _errorMessage = 'Unable to check for updates';
-          }
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isChecking = false;
-          _errorMessage = 'Network error: $e';
-        });
-      }
+    await settings.checkForUpdates(appVersion);
+    
+    if (mounted && settings.updateInfo == null) {
+      setState(() {
+        _errorMessage = 'Unable to check for updates';
+      });
     }
   }
 
-  Future<void> _openDownloadPage() async {
-    if (_updateInfo?.downloadUrl != null) {
-      final success = await UpdateService.openDownloadPage(_updateInfo!.downloadUrl);
-      if (!success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to open download page'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+  void _showUpdateDialog() {
+    final settings = context.read<AppSettings>();
+    if (settings.updateInfo != null) {
+      showDialog(
+        context: context,
+        builder: (context) => _UpdateDialog(updateInfo: settings.updateInfo!),
+      );
     }
   }
 
-  Widget _buildSubtitle(ThemeData theme) {
+  Widget _buildSubtitle(ThemeData theme, AppSettings settings) {
     final List<InlineSpan> spans = [
       TextSpan(text: 'Current version: $appVersion'),
     ];
 
-    if (_isChecking) {
+    if (settings.isCheckingUpdate) {
       spans.add(const TextSpan(text: '\nChecking...'));
     } else if (_errorMessage != null) {
       spans.add(TextSpan(
         text: '\n$_errorMessage',
         style: const TextStyle(color: Colors.red),
       ));
-    } else if (_updateInfo != null) {
-      if (_updateInfo!.hasUpdate) {
+    } else if (settings.updateInfo != null) {
+      if (settings.updateInfo!.hasUpdate) {
         spans.add(TextSpan(
-          text: '\nUpdate available: v${_updateInfo!.latestVersion}',
+          text: '\nUpdate available: v${settings.updateInfo!.latestVersion}',
           style: const TextStyle(color: Colors.green),
         ));
       } else {
@@ -627,8 +814,8 @@ class _UpdateCheckCardState extends State<_UpdateCheckCard> {
     return Text.rich(TextSpan(children: spans));
   }
 
-  Widget _buildTrailing() {
-    if (_isChecking) {
+  Widget _buildTrailing(AppSettings settings) {
+    if (settings.isCheckingUpdate) {
       return const SizedBox(
         width: 24,
         height: 24,
@@ -636,10 +823,10 @@ class _UpdateCheckCardState extends State<_UpdateCheckCard> {
       );
     }
 
-    if (_updateInfo?.hasUpdate == true) {
+    if (settings.updateInfo?.hasUpdate == true) {
       return ElevatedButton(
-        onPressed: _openDownloadPage,
-        child: const Text('Download'),
+        onPressed: _showUpdateDialog,
+        child: const Text('Update'),
       );
     }
 
@@ -653,13 +840,17 @@ class _UpdateCheckCardState extends State<_UpdateCheckCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Card(
-      child: ListTile(
-        leading: const Icon(Icons.system_update),
-        title: const Text('Check for Updates'),
-        subtitle: _buildSubtitle(theme),
-        trailing: _buildTrailing(),
-      ),
+    return Consumer<AppSettings>(
+      builder: (context, settings, child) {
+        return Card(
+          child: ListTile(
+            leading: const Icon(Icons.system_update),
+            title: const Text('Check for Updates'),
+            subtitle: _buildSubtitle(theme, settings),
+            trailing: _buildTrailing(settings),
+          ),
+        );
+      },
     );
   }
 }

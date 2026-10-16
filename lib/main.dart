@@ -37,10 +37,13 @@ class _MavFlowAppState extends State<MavFlowApp> {
   }
 
   Future<void> _initializeApp() async {
+    if (!mounted) return;
+    
     // Load app settings (theme, etc.)
     final settings = context.read<AppSettings>();
     await settings.loadSettings();
 
+    if (!mounted) return;
     final state = context.read<MavlinkState>();
 
     // 1. Load message spec
@@ -56,6 +59,19 @@ class _MavFlowAppState extends State<MavFlowApp> {
     } catch (e) {
       debugPrint('Failed to load role config: $e');
     }
+
+    // 3. Check for updates (background, non-blocking)
+    _checkForUpdatesInBackground(settings);
+  }
+
+  /// 백그라운드에서 업데이트를 확인합니다.
+  void _checkForUpdatesInBackground(AppSettings settings) {
+    // 약간의 지연 후 확인 (앱 시작 직후 네트워크 부하 방지)
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        settings.checkForUpdates(appVersion);
+      }
+    });
   }
 
   @override

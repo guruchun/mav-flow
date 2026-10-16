@@ -113,10 +113,10 @@ class DataTableEntry {
 
 /// Data Table 전체 관리
 class DataTable {
-  /// 모든 항목 (TAG → Entry)
+  /// 모든 항목 (TAG to Entry)
   final Map<String, DataTableEntry> entries = {};
 
-  /// 메시지별 항목 목록 (MessageName → List<Entry>)
+  /// 메시지별 항목 목록 (MessageName to List of Entry)
   final Map<String, List<DataTableEntry>> _entriesByMessage = {};
 
   /// 항목 추가

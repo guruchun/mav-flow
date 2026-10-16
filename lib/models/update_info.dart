@@ -11,6 +11,9 @@ class UpdateInfo {
   /// 다운로드 URL (GitHub Release 페이지)
   final String downloadUrl;
 
+  /// ZIP 파일 직접 다운로드 URL
+  final String? zipDownloadUrl;
+
   /// 릴리즈 노트
   final String releaseNotes;
 
@@ -21,6 +24,7 @@ class UpdateInfo {
     required this.latestVersion,
     required this.currentVersion,
     required this.downloadUrl,
+    this.zipDownloadUrl,
     required this.releaseNotes,
     required this.publishedAt,
   });
@@ -42,10 +46,24 @@ class UpdateInfo {
         ? tagName.substring(1) 
         : tagName;
 
+    // assets에서 Windows ZIP 파일 URL 찾기
+    String? zipUrl;
+    final assets = json['assets'] as List<dynamic>?;
+    if (assets != null) {
+      for (final asset in assets) {
+        final name = asset['name'] as String? ?? '';
+        if (name.contains('windows') && name.endsWith('.zip')) {
+          zipUrl = asset['browser_download_url'] as String?;
+          break;
+        }
+      }
+    }
+
     return UpdateInfo(
       latestVersion: latestVersion,
       currentVersion: currentVersion,
       downloadUrl: json['html_url'] as String? ?? '',
+      zipDownloadUrl: zipUrl,
       releaseNotes: json['body'] as String? ?? '',
       publishedAt: DateTime.tryParse(json['published_at'] as String? ?? '') ??
           DateTime.now(),
