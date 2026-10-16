@@ -4,11 +4,13 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../main.dart' show appVersion;
 import '../models/app_settings.dart';
 import '../models/mavlink_state.dart';
-import '../models/role_config.dart';
+import '../models/update_info.dart';
 import '../services/communication/communication_interface.dart';
 import '../services/communication/serial_communication.dart';
+import '../services/update_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/receive_panel.dart';
 import '../widgets/role_selector.dart';
@@ -339,6 +341,11 @@ class SettingsScreen extends StatelessWidget {
 
               const SizedBox(height: 16),
 
+              // Check for updates
+              const _UpdateCheckCard(),
+
+              const SizedBox(height: 16),
+
               // About
               const Card(
                 child: ListTile(
@@ -533,6 +540,126 @@ class MavlinkStatusBar extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Update Check Card for Settings screen
+class _UpdateCheckCard extends StatefulWidget {
+  const _UpdateCheckCard();
+
+  @override
+  State<_UpdateCheckCard> createState() => _UpdateCheckCardState();
+}
+
+class _UpdateCheckCardState extends State<_UpdateCheckCard> {
+  UpdateInfo? _updateInfo;
+  bool _isChecking = false;
+  String? _errorMessage;
+
+  Future<void> _checkForUpdates() async {
+    setState(() {
+      _isChecking = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final result = await UpdateService.checkForUpdates(appVersion);
+      if (mounted) {
+        setState(() {
+          _updateInfo = result;
+          _isChecking = false;
+          if (result == null) {
+            _errorMessage = 'Unable to check for updates';
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isChecking = false;
+          _errorMessage = 'Network error: $e';
+        });
+      }
+    }
+  }
+
+  Future<void> _openDownloadPage() async {
+    if (_updateInfo?.downloadUrl != null) {
+      final success = await UpdateService.openDownloadPage(_updateInfo!.downloadUrl);
+      if (!success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to open download page'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildSubtitle(ThemeData theme) {
+    final List<InlineSpan> spans = [
+      TextSpan(text: 'Current version: $appVersion'),
+    ];
+
+    if (_isChecking) {
+      spans.add(const TextSpan(text: '\nChecking...'));
+    } else if (_errorMessage != null) {
+      spans.add(TextSpan(
+        text: '\n$_errorMessage',
+        style: const TextStyle(color: Colors.red),
+      ));
+    } else if (_updateInfo != null) {
+      if (_updateInfo!.hasUpdate) {
+        spans.add(TextSpan(
+          text: '\nUpdate available: v${_updateInfo!.latestVersion}',
+          style: const TextStyle(color: Colors.green),
+        ));
+      } else {
+        spans.add(TextSpan(
+          text: '\nUp to date',
+          style: TextStyle(color: theme.secondaryTextColor),
+        ));
+      }
+    }
+
+    return Text.rich(TextSpan(children: spans));
+  }
+
+  Widget _buildTrailing() {
+    if (_isChecking) {
+      return const SizedBox(
+        width: 24,
+        height: 24,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      );
+    }
+
+    if (_updateInfo?.hasUpdate == true) {
+      return ElevatedButton(
+        onPressed: _openDownloadPage,
+        child: const Text('Download'),
+      );
+    }
+
+    return OutlinedButton(
+      onPressed: _checkForUpdates,
+      child: const Text('Check'),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.system_update),
+        title: const Text('Check for Updates'),
+        subtitle: _buildSubtitle(theme),
+        trailing: _buildTrailing(),
+      ),
     );
   }
 }
