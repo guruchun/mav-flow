@@ -155,6 +155,8 @@ class _UpdateDialogState extends State<_UpdateDialog> {
       }
 
       // 설치 (앱 종료 필요)
+      if (!mounted) return;
+      
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
