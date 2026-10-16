@@ -6,15 +6,15 @@ import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 import 'communication_interface.dart';
 
-/// MAVLink v2 헤더 바이트
+/// MAVLink v2 header byte
 const int mavlinkV2Magic = 0xFD;
 
-/// MAVLink v1 헤더 바이트 (호환용)
+/// MAVLink v1 header byte (for compatibility)
 const int mavlinkV1Magic = 0xFE;
 
-// ─── Isolate 메시지 타입 ─────────────────────────────────────────────────
+// --- Isolate message types ---
 
-/// 메인 isolate → worker isolate 명령
+/// Main isolate → worker isolate commands
 sealed class _WorkerCommand {}
 
 class _CmdConnect extends _WorkerCommand {
@@ -42,7 +42,7 @@ class _CmdSend extends _WorkerCommand {
   _CmdSend(this.data);
 }
 
-/// worker isolate → 메인 isolate 응답
+/// Worker isolate → main isolate responses
 sealed class _WorkerResponse {}
 
 class _RespConnected extends _WorkerResponse {}
@@ -59,15 +59,15 @@ class _RespData extends _WorkerResponse {
   _RespData(this.data);
 }
 
-// ─── Worker Isolate 진입점 ───────────────────────────────────────────────
+// --- Worker Isolate entry point ---
 
-/// Isolate 진입점 — 포트 열기, 수신 루프.
+/// Isolate entry point — opens port, receive loop.
 ///
-/// MAVLink 프레임 동기화는 메인 isolate의 MavlinkParser에서 처리하므로
-/// 여기서는 원시 바이트 데이터만 전달합니다.
+/// MAVLink frame synchronization is handled by MavlinkParser in main isolate,
+/// so only raw byte data is passed here.
 void _serialIsolateEntry(SendPort mainSendPort) {
   final cmdReceivePort = ReceivePort();
-  // worker의 수신 포트를 메인에 전달
+  // Send worker's receive port to main
   mainSendPort.send(cmdReceivePort.sendPort);
 
   SerialPort? port;
@@ -90,7 +90,7 @@ void _serialIsolateEntry(SendPort mainSendPort) {
 
         if (!port!.openReadWrite()) {
           final err = SerialPort.lastError;
-          replyPort?.send(_RespError('포트 열기 실패: ${err?.message ?? "unknown"}'));
+          replyPort?.send(_RespError('Failed to open port: ${err?.message ?? "unknown"}'));
           return;
         }
 
@@ -100,11 +100,11 @@ void _serialIsolateEntry(SendPort mainSendPort) {
         reader = SerialPortReader(port!);
         subscription = reader!.stream.listen(
           (data) {
-            // 원시 바이트 데이터를 메인 isolate로 전달
+            // Pass raw byte data to main isolate
             replyPort?.send(_RespData(Uint8List.fromList(data)));
           },
           onError: (e) {
-            replyPort?.send(_RespError('수신 오류: $e'));
+            replyPort?.send(_RespError('Receive error: $e'));
             _cleanup(port, reader, subscription, replyPort);
           },
           onDone: () {
@@ -112,15 +112,15 @@ void _serialIsolateEntry(SendPort mainSendPort) {
           },
         );
       } catch (e) {
-        replyPort?.send(_RespError('포트 오류: $e'));
+        replyPort?.send(_RespError('Port error: $e'));
       }
     } else if (msg is _CmdSend) {
-      // 데이터 전송
+      // Send data
       if (port != null && port!.isOpen) {
         try {
           port!.write(msg.data);
         } catch (e) {
-          replyPort?.send(_RespError('전송 오류: $e'));
+          replyPort?.send(_RespError('Send error: $e'));
         }
       }
     } else if (msg is _CmdDisconnect) {
@@ -146,12 +146,12 @@ void _cleanup(
   replyPort?.send(_RespDisconnected());
 }
 
-// ─── SerialCommunication (CommunicationInterface 구현) ─────────────────────
+// --- SerialCommunication (CommunicationInterface implementation) ---
 
-/// 시리얼 통신 구현체
+/// Serial communication implementation
 ///
-/// [CommunicationInterface]를 구현하여 시리얼 포트를 통한 통신을 제공합니다.
-/// MAVLink v2 프레임 동기화(0xFD 헤더)는 [MavlinkParser]에서 처리합니다.
+/// Implements [CommunicationInterface] to provide serial port communication.
+/// MAVLink v2 frame synchronization (0xFD header) is handled by [MavlinkParser].
 class SerialCommunication implements CommunicationInterface {
   Isolate? _isolate;
   SendPort? _workerSendPort;
@@ -176,7 +176,7 @@ class SerialCommunication implements CommunicationInterface {
   @override
   bool get isConnected => _currentState == SerialConnectionState.connected;
 
-  /// 현재 시스템에서 사용 가능한 시리얼 포트 이름 목록을 반환합니다.
+  /// Returns list of available serial port names on the current system.
   static List<String> availablePorts() => SerialPort.availablePorts;
 
   @override
@@ -235,7 +235,7 @@ class SerialCommunication implements CommunicationInterface {
     if (_workerSendPort != null) {
       _workerSendPort!.send(_CmdDisconnect());
 
-      // Isolate 정리를 위한 짧은 지연
+      // Short delay for isolate cleanup
       await Future.delayed(const Duration(milliseconds: 100));
     }
 
@@ -245,7 +245,7 @@ class SerialCommunication implements CommunicationInterface {
   @override
   Future<void> send(Uint8List data) async {
     if (!isConnected || _workerSendPort == null) {
-      throw StateError('연결되지 않은 상태에서는 데이터를 전송할 수 없습니다.');
+      throw StateError('Cannot send data when not connected.');
     }
 
     _workerSendPort!.send(_CmdSend(data));

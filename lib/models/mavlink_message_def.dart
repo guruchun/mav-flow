@@ -1,23 +1,23 @@
-/// MAVLink 메시지 정의
+/// MAVLink message definition
 ///
-/// MAVLink XML 파일에서 파싱된 메시지 정의를 나타냅니다.
+/// Represents a message definition parsed from MAVLink XML files.
 class MavlinkMessageDef {
-  /// 메시지 ID (24-bit)
+  /// Message ID (24-bit)
   final int id;
 
-  /// 메시지 이름 (예: "HEARTBEAT", "SYS_STATUS")
+  /// Message name (e.g., "HEARTBEAT", "SYS_STATUS")
   final String name;
 
-  /// 메시지 설명
+  /// Message description
   final String description;
 
-  /// 필드 목록 (페이로드 순서대로)
+  /// Field list (in payload order)
   final List<MavlinkFieldDef> fields;
 
-  /// CRC Extra 값 (메시지 무결성 검증용)
+  /// CRC Extra value (for message integrity verification)
   final int crcExtra;
 
-  /// 페이로드 최소 크기 (바이트)
+  /// Minimum payload size (bytes)
   final int minPayloadLength;
 
   const MavlinkMessageDef({
@@ -29,7 +29,7 @@ class MavlinkMessageDef {
     required this.minPayloadLength,
   });
 
-  /// JSON에서 생성
+  /// Creates from JSON
   factory MavlinkMessageDef.fromJson(Map<String, dynamic> json) {
     return MavlinkMessageDef(
       id: json['id'] as int,
@@ -43,7 +43,7 @@ class MavlinkMessageDef {
     );
   }
 
-  /// JSON으로 변환
+  /// Converts to JSON
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
@@ -53,7 +53,7 @@ class MavlinkMessageDef {
         'minPayloadLength': minPayloadLength,
       };
 
-  /// 필드 이름으로 필드 정의 찾기
+  /// Finds field definition by field name
   MavlinkFieldDef? getField(String fieldName) {
     for (final field in fields) {
       if (field.name == fieldName) return field;
@@ -65,32 +65,32 @@ class MavlinkMessageDef {
   String toString() => 'MavlinkMessageDef(id: $id, name: $name)';
 }
 
-/// MAVLink 필드 정의
+/// MAVLink field definition
 ///
-/// MAVLink 메시지 내의 개별 필드 정의를 나타냅니다.
+/// Represents an individual field definition within a MAVLink message.
 class MavlinkFieldDef {
-  /// 필드 이름
+  /// Field name
   final String name;
 
-  /// 필드 데이터 타입 (예: "uint8_t", "int16_t", "float", "char[16]")
+  /// Field data type (e.g., "uint8_t", "int16_t", "float", "char[16]")
   final String type;
 
-  /// 배열 길이 (배열이 아니면 0)
+  /// Array length (0 if not an array)
   final int arrayLength;
 
-  /// 필드 설명
+  /// Field description
   final String description;
 
-  /// 단위 (예: "m/s", "deg", "mV")
+  /// Unit (e.g., "m/s", "deg", "mV")
   final String? units;
 
-  /// 열거형 이름 (열거형 필드인 경우)
+  /// Enum name (if this is an enum field)
   final String? enumName;
 
-  /// 페이로드 내 오프셋 (바이트)
+  /// Offset in payload (bytes)
   final int offset;
 
-  /// 필드 크기 (바이트)
+  /// Field size (bytes)
   final int size;
 
   const MavlinkFieldDef({
@@ -104,7 +104,7 @@ class MavlinkFieldDef {
     required this.size,
   });
 
-  /// JSON에서 생성
+  /// Creates from JSON
   factory MavlinkFieldDef.fromJson(Map<String, dynamic> json) {
     return MavlinkFieldDef(
       name: json['name'] as String,
@@ -118,7 +118,7 @@ class MavlinkFieldDef {
     );
   }
 
-  /// JSON으로 변환
+  /// Converts to JSON
   Map<String, dynamic> toJson() => {
         'name': name,
         'type': type,
@@ -130,10 +130,10 @@ class MavlinkFieldDef {
         'size': size,
       };
 
-  /// 배열 필드인지 확인
+  /// Checks if this is an array field
   bool get isArray => arrayLength > 0;
 
-  /// 기본 데이터 타입 반환 (배열 표기 제거)
+  /// Returns base data type (removes array notation)
   String get baseType {
     final bracketIndex = type.indexOf('[');
     return bracketIndex > 0 ? type.substring(0, bracketIndex) : type;
@@ -143,18 +143,18 @@ class MavlinkFieldDef {
   String toString() => 'MavlinkFieldDef(name: $name, type: $type)';
 }
 
-/// MAVLink 열거형 정의
+/// MAVLink enum definition
 class MavlinkEnumDef {
-  /// 열거형 이름
+  /// Enum name
   final String name;
 
-  /// 열거형 설명
+  /// Enum description
   final String description;
 
-  /// 열거형 항목 목록
+  /// Enum entry list
   final List<MavlinkEnumEntry> entries;
 
-  /// 비트마스크 열거형인지 여부
+  /// Whether this is a bitmask enum
   final bool isBitmask;
 
   const MavlinkEnumDef({
@@ -164,7 +164,7 @@ class MavlinkEnumDef {
     this.isBitmask = false,
   });
 
-  /// JSON에서 생성
+  /// Creates from JSON
   factory MavlinkEnumDef.fromJson(Map<String, dynamic> json) {
     return MavlinkEnumDef(
       name: json['name'] as String,
@@ -176,7 +176,7 @@ class MavlinkEnumDef {
     );
   }
 
-  /// JSON으로 변환
+  /// Converts to JSON
   Map<String, dynamic> toJson() => {
         'name': name,
         'description': description,
@@ -184,7 +184,7 @@ class MavlinkEnumDef {
         'isBitmask': isBitmask,
       };
 
-  /// 값으로 항목 찾기
+  /// Finds entry by value
   MavlinkEnumEntry? getEntryByValue(int value) {
     for (final entry in entries) {
       if (entry.value == value) return entry;
@@ -193,15 +193,15 @@ class MavlinkEnumDef {
   }
 }
 
-/// MAVLink 열거형 항목
+/// MAVLink enum entry
 class MavlinkEnumEntry {
-  /// 항목 이름
+  /// Entry name
   final String name;
 
-  /// 항목 값
+  /// Entry value
   final int value;
 
-  /// 항목 설명
+  /// Entry description
   final String description;
 
   const MavlinkEnumEntry({
@@ -210,7 +210,7 @@ class MavlinkEnumEntry {
     required this.description,
   });
 
-  /// JSON에서 생성
+  /// Creates from JSON
   factory MavlinkEnumEntry.fromJson(Map<String, dynamic> json) {
     return MavlinkEnumEntry(
       name: json['name'] as String,
@@ -219,7 +219,7 @@ class MavlinkEnumEntry {
     );
   }
 
-  /// JSON으로 변환
+  /// Converts to JSON
   Map<String, dynamic> toJson() => {
         'name': name,
         'value': value,
@@ -227,23 +227,23 @@ class MavlinkEnumEntry {
       };
 }
 
-/// MAVLink 메시지 규격 (전체)
+/// MAVLink message specification (complete)
 ///
-/// XML 파일에서 파싱된 전체 메시지 규격을 나타냅니다.
+/// Represents the complete message specification parsed from XML files.
 class MavlinkSpec {
-  /// MAVLink 버전
+  /// MAVLink version
   final int version;
 
-  /// 다이얼렉트 버전
+  /// Dialect version
   final int dialect;
 
-  /// 메시지 정의 맵 (ID → MessageDef)
+  /// Message definition map (ID → MessageDef)
   final Map<int, MavlinkMessageDef> messages;
 
-  /// 메시지 정의 맵 (이름 → MessageDef)
+  /// Message definition map (name → MessageDef)
   final Map<String, MavlinkMessageDef> messagesByName;
 
-  /// 열거형 정의 맵 (이름 → EnumDef)
+  /// Enum definition map (name → EnumDef)
   final Map<String, MavlinkEnumDef> enums;
 
   MavlinkSpec({
@@ -255,7 +255,7 @@ class MavlinkSpec {
         messagesByName = {for (var m in messageList) m.name: m},
         enums = {for (var e in enumList) e.name: e};
 
-  /// JSON에서 생성
+  /// Creates from JSON
   factory MavlinkSpec.fromJson(Map<String, dynamic> json) {
     final messageList = (json['messages'] as List<dynamic>)
         .map((m) => MavlinkMessageDef.fromJson(m as Map<String, dynamic>))
@@ -273,7 +273,7 @@ class MavlinkSpec {
     );
   }
 
-  /// JSON으로 변환
+  /// Converts to JSON
   Map<String, dynamic> toJson() => {
         'version': version,
         'dialect': dialect,
@@ -281,26 +281,26 @@ class MavlinkSpec {
         'enums': enums.values.map((e) => e.toJson()).toList(),
       };
 
-  /// 메시지 ID로 메시지 정의 찾기
+  /// Finds message definition by message ID
   MavlinkMessageDef? getMessage(int id) => messages[id];
 
-  /// 메시지 이름으로 메시지 정의 찾기
+  /// Finds message definition by message name
   MavlinkMessageDef? getMessageByName(String name) => messagesByName[name];
 
-  /// 열거형 이름으로 열거형 정의 찾기
+  /// Finds enum definition by enum name
   MavlinkEnumDef? getEnum(String name) => enums[name];
 
-  /// 지정된 메시지 이름만 포함하는 새 MavlinkSpec을 반환합니다.
+  /// Returns a new MavlinkSpec containing only the specified message names.
   ///
-  /// [messageNames]에 포함된 메시지만 필터링하고,
-  /// 해당 메시지에서 참조하는 열거형만 포함합니다.
+  /// Filters messages by [messageNames] and includes only
+  /// enums referenced by those messages.
   MavlinkSpec filterByMessages(Set<String> messageNames) {
-    // 필터링된 메시지 목록
+    // Filtered message list
     final filteredMessages = messages.values
         .where((m) => messageNames.contains(m.name))
         .toList();
 
-    // 필터링된 메시지에서 참조하는 열거형 이름 수집
+    // Collect enum names referenced by filtered messages
     final referencedEnums = <String>{};
     for (final message in filteredMessages) {
       for (final field in message.fields) {
@@ -310,7 +310,7 @@ class MavlinkSpec {
       }
     }
 
-    // 참조된 열거형만 포함
+    // Include only referenced enums
     final filteredEnums = enums.values
         .where((e) => referencedEnums.contains(e.name))
         .toList();

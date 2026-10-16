@@ -12,28 +12,28 @@ import '../services/mavlink_codec.dart';
 import '../services/mavlink_parser.dart';
 import '../services/mavlink_spec_loader.dart';
 
-/// MAVLink 기능을 포함한 앱 전역 상태
+/// App-wide state including MAVLink functionality
 ///
-/// 역할 관리, 메시지 규격, Data Table, 통신, 자동 전송 등을 관리합니다.
+/// Manages role management, message spec, Data Table, communication, auto-send, etc.
 class MavlinkState extends ChangeNotifier {
-  // ─── 역할 관리 ───────────────────────────────────────────────
+  // --- Role Management ---
   String _currentRoleId = 'gcs';
   Map<String, RoleConfig> _roleConfigs = {};
   List<String> _roleOrder = [];
 
-  /// 현재 선택된 역할 ID (빈 문자열이면 선택 안 됨)
+  /// Currently selected role ID (empty string if not selected)
   String get currentRoleId => _currentRoleId;
 
-  /// 역할이 선택되었는지 확인
+  /// Checks if role is selected
   bool get isRoleSelected => _currentRoleId.isNotEmpty && _roleConfigs.containsKey(_currentRoleId);
 
-  /// 사용 가능한 역할 목록 (UI 표시 순서)
+  /// Available role list (UI display order)
   List<String> get availableRoleIds => _roleOrder;
 
-  /// 로드된 모든 역할 설정
+  /// All loaded role configs
   Map<String, RoleConfig> get roleConfigs => _roleConfigs;
 
-  /// 현재 역할 설정
+  /// Current role config
   RoleConfig get currentRoleConfig =>
       _roleConfigs[_currentRoleId] ??
       const RoleConfig(
@@ -46,28 +46,28 @@ class MavlinkState extends ChangeNotifier {
         rxMessages: [],
       );
 
-  /// 역할을 변경합니다.
+  /// Changes role.
   void setRole(String roleId) {
     if (_currentRoleId != roleId && _roleConfigs.containsKey(roleId)) {
       _currentRoleId = roleId;
-      _initializeDataTable();  // 역할 변경 시 Data Table 재초기화
+      _initializeDataTable();  // Reinitialize Data Table on role change
       initializeAutoSendConfigs();
       notifyListeners();
     }
   }
 
-  /// 역할 설정을 로드합니다.
+  /// Loads role configs.
   Future<void> loadRoleConfigs(String configPath) async {
     try {
       final result = await RoleConfigLoader.loadFromAsset(configPath);
       _roleConfigs = result.configs;
       _roleOrder = result.roleOrder;
 
-      // 역할만 로드하고, 기본 역할 선택은 하지 않음 (사용자가 직접 선택)
-      // currentRoleId는 빈 상태로 유지하거나 첫 번째 역할로 설정하지 않음
-      _currentRoleId = ''; // 선택되지 않은 상태
+      // Only load roles, don't select default (user selects directly)
+      // Keep currentRoleId empty or don't set to first role
+      _currentRoleId = ''; // Not selected state
     } catch (e) {
-      debugPrint('역할 설정 로드 실패: $e');
+      debugPrint('Failed to load role configs: $e');
       _roleConfigs = {};
       _roleOrder = [];
       _currentRoleId = '';
@@ -75,7 +75,7 @@ class MavlinkState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ─── 메시지 규격 ─────────────────────────────────────────────
+  // --- Message Spec ---
   MavlinkSpec? _spec;
   MavlinkParser? _parser;
   MavlinkCodec? _codec;
@@ -83,7 +83,7 @@ class MavlinkState extends ChangeNotifier {
   MavlinkSpec? get spec => _spec;
   bool get isSpecLoaded => _spec != null;
 
-  /// 메시지 규격을 로드합니다.
+  /// Loads message spec.
   Future<void> loadSpec(String jsonPath) async {
     try {
       _spec = await MavlinkSpecLoader.loadFromAssetJson(jsonPath);
@@ -91,21 +91,21 @@ class MavlinkState extends ChangeNotifier {
       _codec = MavlinkCodec(_spec!);
       _initializeDataTable();
     } catch (e) {
-      debugPrint('메시지 규격 로드 실패: $e');
+      debugPrint('Failed to load message spec: $e');
     }
     notifyListeners();
   }
 
-  /// XML을 JSON으로 변환합니다.
+  /// Converts XML to JSON.
   ///
-  /// role_config.json에 정의된 메시지만 변환합니다.
+  /// Converts only messages defined in role_config.json.
   Future<void> convertMessageSpec({
     required List<String> xmlPaths,
     required String outputJsonPath,
     required String roleConfigPath,
   }) async {
     try {
-      // role_config에서 필요한 메시지 이름 추출
+      // Extract required message names from role_config
       final messageNames =
           await MavlinkSpecLoader.extractMessageNamesFromRoleConfig(
               roleConfigPath);
@@ -115,28 +115,28 @@ class MavlinkState extends ChangeNotifier {
         outputJsonPath: outputJsonPath,
         messageFilter: messageNames,
       );
-      // 변환 후 다시 로드
+      // Reload after conversion
       _spec = await MavlinkSpecLoader.loadFromFileJson(outputJsonPath);
       _parser = MavlinkParser(_spec!);
       _codec = MavlinkCodec(_spec!);
       _initializeDataTable();
       notifyListeners();
     } catch (e) {
-      debugPrint('메시지 규격 변환 실패: $e');
+      debugPrint('Failed to convert message spec: $e');
       rethrow;
     }
   }
 
-  // ─── Data Table ─────────────────────────────────────────────
+  // --- Data Table ---
   final DataTable dataTable = DataTable();
 
-  /// Data Table을 초기화합니다.
+  /// Initializes Data Table.
   void _initializeDataTable() {
     dataTable.clear();
 
     if (_spec == null) return;
 
-    // 현재 역할의 송수신 메시지에 대해 Data Table 항목 생성
+    // Create Data Table entries for current role's TX/RX messages
     final roleConfig = currentRoleConfig;
     final messageNames = <String>{
       ...roleConfig.txMessages,
@@ -163,7 +163,7 @@ class MavlinkState extends ChangeNotifier {
     }
   }
 
-  /// 수신 메시지로 Data Table을 업데이트합니다.
+  /// Updates Data Table from received message.
   void updateFromReceivedMessage(Map<String, dynamic> fields) {
     for (final entry in fields.entries) {
       dataTable.updateCurrentValue(entry.key, entry.value);
@@ -171,30 +171,30 @@ class MavlinkState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 전송값을 업데이트합니다.
+  /// Updates send value.
   void updateSendValue(String tag, dynamic value) {
     dataTable.updateSendValue(tag, value);
     notifyListeners();
   }
 
-  /// 현재값을 전송값으로 복사합니다.
+  /// Copies current value to send value.
   void copyCurrentToSend(String messageName) {
     dataTable.copyCurrentToSendForMessage(messageName);
     notifyListeners();
   }
 
-  /// 전송값을 JSON 파일로 저장합니다.
+  /// Saves send values to JSON file.
   Future<void> saveSendValuesToFile(String filePath) async {
     await dataTable.saveSendValuesToFile(filePath);
   }
 
-  /// JSON 파일에서 전송값을 로드합니다.
+  /// Loads send values from JSON file.
   Future<void> loadSendValuesFromFile(String filePath) async {
     await dataTable.loadSendValuesFromFile(filePath);
     notifyListeners();
   }
 
-  // ─── 통신 ───────────────────────────────────────────────────
+  // --- Communication ---
   CommunicationInterface? _communication;
   StreamSubscription? _connectionStateSub;
   StreamSubscription? _dataStreamSub;
@@ -202,7 +202,7 @@ class MavlinkState extends ChangeNotifier {
   SerialConnectionState _connectionState = SerialConnectionState.disconnected;
   int _sequence = 0;
 
-  // 통계
+  // Statistics
   int _rxPacketCount = 0;
   int _txPacketCount = 0;
   final List<DateTime> _rxTimestamps = [];
@@ -214,7 +214,7 @@ class MavlinkState extends ChangeNotifier {
   int get txPacketCount => _txPacketCount;
   int get crcErrorCount => _parser?.crcErrors ?? 0;
 
-  /// 수신율 (Hz) 계산
+  /// Calculates receive rate (Hz)
   double get rxRate {
     final now = DateTime.now();
     _rxTimestamps
@@ -222,7 +222,7 @@ class MavlinkState extends ChangeNotifier {
     return _rxTimestamps.length.toDouble();
   }
 
-  /// 시리얼 포트에 연결합니다.
+  /// Connects to serial port.
   Future<void> connect(SerialConfig config) async {
     if (_communication != null) {
       await disconnect();
@@ -230,13 +230,13 @@ class MavlinkState extends ChangeNotifier {
 
     _communication = SerialCommunication();
 
-    // 연결 상태 구독
+    // Subscribe to connection state
     _connectionStateSub = _communication!.connectionState.listen((state) {
       _connectionState = state;
       notifyListeners();
     });
 
-    // 데이터 스트림 구독
+    // Subscribe to data stream
     _dataStreamSub = _communication!.dataStream.listen(_handleReceivedData);
 
     try {
@@ -248,7 +248,7 @@ class MavlinkState extends ChangeNotifier {
     }
   }
 
-  /// 연결을 해제합니다.
+  /// Disconnects.
   Future<void> disconnect() async {
     _autoSendManager?.stopAll();
 
@@ -264,7 +264,7 @@ class MavlinkState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 수신된 데이터를 처리합니다.
+  /// Handles received data.
   void _handleReceivedData(Uint8List data) {
     if (_parser == null) return;
 
@@ -273,7 +273,7 @@ class MavlinkState extends ChangeNotifier {
       _rxPacketCount++;
       _rxTimestamps.add(DateTime.now());
 
-      // 페이로드 파싱
+      // Parse payload
       final fields = _parser!.parsePayload(frame);
       if (fields.isNotEmpty) {
         updateFromReceivedMessage(fields);
@@ -281,14 +281,14 @@ class MavlinkState extends ChangeNotifier {
     }
   }
 
-  /// 메시지를 전송합니다.
+  /// Sends message.
   Future<void> sendMessage(int messageId) async {
     if (!isConnected || _codec == null || _communication == null) return;
 
     final messageDef = _spec?.getMessage(messageId);
     if (messageDef == null) return;
 
-    // Data Table에서 전송값 수집
+    // Collect send values from Data Table
     final fieldValues = dataTable.getSendValuesForMessage(messageDef.name);
 
     try {
@@ -304,11 +304,11 @@ class MavlinkState extends ChangeNotifier {
       _txPacketCount++;
       notifyListeners();
     } catch (e) {
-      debugPrint('메시지 전송 실패: $e');
+      debugPrint('Failed to send message: $e');
     }
   }
 
-  /// 메시지 이름으로 전송합니다.
+  /// Sends message by name.
   Future<void> sendMessageByName(String messageName) async {
     final messageDef = _spec?.getMessageByName(messageName);
     if (messageDef != null) {
@@ -316,7 +316,7 @@ class MavlinkState extends ChangeNotifier {
     }
   }
 
-  // ─── 자동 전송 ───────────────────────────────────────────────
+  // --- Auto-send ---
   AutoSendManager? _autoSendManager;
 
   AutoSendManager get autoSendManager {
@@ -326,19 +326,19 @@ class MavlinkState extends ChangeNotifier {
     return _autoSendManager!;
   }
 
-  /// 메시지의 자동 전송을 토글합니다.
+  /// Toggles auto-send for message.
   void toggleAutoSend(int messageId) {
     autoSendManager.toggle(messageId);
     notifyListeners();
   }
 
-  /// 자동 전송 주기를 설정합니다.
+  /// Sets auto-send interval.
   void setAutoSendInterval(int messageId, int intervalMs) {
     autoSendManager.setInterval(messageId, intervalMs);
     notifyListeners();
   }
 
-  /// 자동 전송 설정을 초기화합니다.
+  /// Initializes auto-send configs.
   void initializeAutoSendConfigs() {
     if (_spec == null) return;
 
@@ -355,13 +355,13 @@ class MavlinkState extends ChangeNotifier {
     }
   }
 
-  /// 모든 자동 전송을 중지합니다.
+  /// Stops all auto-sends.
   void stopAllAutoSend() {
     autoSendManager.stopAll();
     notifyListeners();
   }
 
-  // ─── 통계 초기화 ─────────────────────────────────────────────
+  // --- Statistics Reset ---
   void resetStats() {
     _rxPacketCount = 0;
     _txPacketCount = 0;
@@ -370,7 +370,7 @@ class MavlinkState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ─── 정리 ───────────────────────────────────────────────────
+  // --- Cleanup ---
   @override
   void dispose() {
     _autoSendManager?.dispose();

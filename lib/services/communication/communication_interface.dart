@@ -1,95 +1,95 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-/// 연결 상태 열거형
+/// Connection state enumeration
 ///
-/// Flutter의 ConnectionState와 이름 충돌을 피하기 위해 SerialConnectionState로 명명
+/// Named SerialConnectionState to avoid name collision with Flutter's ConnectionState
 enum SerialConnectionState {
-  /// 연결되지 않은 상태
+  /// Not connected
   disconnected,
 
-  /// 연결 시도 중
+  /// Attempting to connect
   connecting,
 
-  /// 연결됨
+  /// Connected
   connected,
 
-  /// 연결 오류 발생
+  /// Connection error occurred
   error,
 }
 
-/// 통신 인터페이스 추상 클래스
+/// Communication interface abstract class
 ///
-/// 시리얼, TCP, UDP 등 다양한 통신 방식을 추상화합니다.
-/// 향후 TCP/UDP 확장을 위한 공통 인터페이스를 제공합니다.
+/// Abstracts various communication methods like serial, TCP, UDP.
+/// Provides a common interface for future TCP/UDP extensions.
 abstract class CommunicationInterface {
-  /// 연결 상태 스트림
+  /// Connection state stream
   ///
-  /// 연결 상태가 변경될 때마다 새로운 [SerialConnectionState]를 방출합니다.
+  /// Emits a new [SerialConnectionState] whenever connection state changes.
   Stream<SerialConnectionState> get connectionState;
 
-  /// 수신된 바이트 스트림
+  /// Received byte stream
   ///
-  /// 통신 채널을 통해 수신된 원시 바이트 데이터를 방출합니다.
+  /// Emits raw byte data received through the communication channel.
   Stream<Uint8List> get dataStream;
 
-  /// 현재 연결 상태
+  /// Current connection state
   SerialConnectionState get currentState;
 
-  /// 연결 여부를 반환합니다.
+  /// Returns whether connected.
   bool get isConnected;
 
-  /// 연결을 시작합니다.
+  /// Starts connection.
   ///
-  /// [config]는 통신 방식에 따라 다른 설정을 포함합니다.
-  /// - 시리얼: portName, baudRate, dataBits, parity, stopBits
+  /// [config] contains different settings depending on communication method.
+  /// - Serial: portName, baudRate, dataBits, parity, stopBits
   /// - TCP: host, port
   /// - UDP: localPort, remoteHost, remotePort
   ///
-  /// 연결에 실패하면 예외를 던집니다.
+  /// Throws exception on connection failure.
   Future<void> connect(Map<String, dynamic> config);
 
-  /// 연결을 종료합니다.
+  /// Terminates connection.
   ///
-  /// 이미 연결이 종료된 상태에서 호출해도 안전합니다.
+  /// Safe to call even when already disconnected.
   Future<void> disconnect();
 
-  /// 데이터를 전송합니다.
+  /// Sends data.
   ///
-  /// [data]는 전송할 바이트 배열입니다.
-  /// 연결되지 않은 상태에서 호출하면 예외를 던집니다.
+  /// [data] is the byte array to send.
+  /// Throws exception if called when not connected.
   Future<void> send(Uint8List data);
 
-  /// 리소스를 해제합니다.
+  /// Releases resources.
   ///
-  /// 연결을 종료하고 모든 스트림을 닫습니다.
-  /// dispose() 호출 후에는 이 인스턴스를 다시 사용할 수 없습니다.
+  /// Terminates connection and closes all streams.
+  /// This instance cannot be reused after dispose() is called.
   void dispose();
 }
 
-/// 통신 설정 기본 클래스
+/// Communication config base class
 abstract class CommunicationConfig {
   const CommunicationConfig();
   
-  /// 설정을 Map으로 변환합니다.
+  /// Converts config to Map.
   Map<String, dynamic> toMap();
 }
 
-/// 시리얼 통신 설정
+/// Serial communication configuration
 class SerialConfig extends CommunicationConfig {
-  /// 포트 이름 (예: "COM3", "/dev/ttyUSB0")
+  /// Port name (e.g., "COM3", "/dev/ttyUSB0")
   final String portName;
 
-  /// 보드레이트 (예: 9600, 115200, 57600)
+  /// Baud rate (e.g., 9600, 115200, 57600)
   final int baudRate;
 
-  /// 데이터 비트 수 (기본값: 8)
+  /// Data bits (default: 8)
   final int dataBits;
 
-  /// 패리티 (0: none, 1: odd, 2: even)
+  /// Parity (0: none, 1: odd, 2: even)
   final int parity;
 
-  /// 스톱 비트 수 (1 또는 2)
+  /// Stop bits (1 or 2)
   final int stopBits;
 
   const SerialConfig({
@@ -110,12 +110,12 @@ class SerialConfig extends CommunicationConfig {
       };
 }
 
-/// TCP 통신 설정 (향후 확장용)
+/// TCP communication configuration (for future extension)
 class TcpConfig extends CommunicationConfig {
-  /// 호스트 주소
+  /// Host address
   final String host;
 
-  /// 포트 번호
+  /// Port number
   final int port;
 
   const TcpConfig({
@@ -130,15 +130,15 @@ class TcpConfig extends CommunicationConfig {
       };
 }
 
-/// UDP 통신 설정 (향후 확장용)
+/// UDP communication configuration (for future extension)
 class UdpConfig extends CommunicationConfig {
-  /// 로컬 바인딩 포트
+  /// Local binding port
   final int localPort;
 
-  /// 원격 호스트 주소
+  /// Remote host address
   final String remoteHost;
 
-  /// 원격 포트 번호
+  /// Remote port number
   final int remotePort;
 
   const UdpConfig({

@@ -7,13 +7,13 @@ import 'models/mavlink_state.dart';
 import 'screens/main_screen.dart';
 import 'theme/app_theme.dart';
 
-/// 앱 버전 (런타임에 package_info_plus에서 로드)
+/// App version (loaded from package_info_plus at runtime)
 String appVersion = '1.0.0';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // pubspec.yaml에서 버전 정보 로드
+  // Load version info from pubspec.yaml
   try {
     final packageInfo = await PackageInfo.fromPlatform();
     appVersion = packageInfo.version;
@@ -76,9 +76,9 @@ class _MavFlowAppState extends State<MavFlowApp> {
     _checkForUpdatesInBackground(settings);
   }
 
-  /// 백그라운드에서 업데이트를 확인합니다.
+  /// Check for updates in background
   void _checkForUpdatesInBackground(AppSettings settings) {
-    // 약간의 지연 후 확인 (앱 시작 직후 네트워크 부하 방지)
+    // Delay check to avoid network load immediately after app start
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         settings.checkForUpdates(appVersion);

@@ -3,30 +3,30 @@ import 'dart:io';
 
 import 'package:flutter/services.dart' show rootBundle;
 
-/// 역할별 메시지 설정
+/// Role-based message configuration
 ///
-/// role_config.json에서 로드되며, 역할 ID와 이름, 설명,
-/// 시스템/컴포넌트 ID, 송수신 메시지 목록을 포함합니다.
+/// Loaded from role_config.json, contains role ID, name, description,
+/// system/component ID, and TX/RX message lists.
 class RoleConfig {
-  /// 역할 ID (JSON 키, 예: "gen3", "mc", "fcc", "gcs")
+  /// Role ID (JSON key, e.g., "gen3", "mc", "fcc", "gcs")
   final String roleId;
 
-  /// 역할 표시 이름 (예: "GEN3", "MC")
+  /// Role display name (e.g., "GEN3", "MC")
   final String name;
 
-  /// 역할 설명 (예: "DMI Gateway Gen3")
+  /// Role description (e.g., "DMI Gateway Gen3")
   final String description;
 
-  /// 시스템 ID (1-255)
+  /// System ID (1-255)
   final int systemId;
 
-  /// 컴포넌트 ID (0-255)
+  /// Component ID (0-255)
   final int componentId;
 
-  /// 송신 가능한 메시지 이름 목록
+  /// List of transmittable message names
   final List<String> txMessages;
 
-  /// 수신할 메시지 이름 목록
+  /// List of receivable message names
   final List<String> rxMessages;
 
   const RoleConfig({
@@ -39,7 +39,7 @@ class RoleConfig {
     required this.rxMessages,
   });
 
-  /// JSON에서 생성
+  /// Creates from JSON
   factory RoleConfig.fromJson(String roleId, Map<String, dynamic> json) {
     return RoleConfig(
       roleId: roleId,
@@ -58,7 +58,7 @@ class RoleConfig {
     );
   }
 
-  /// JSON으로 변환
+  /// Converts to JSON
   Map<String, dynamic> toJson() => {
         'name': name,
         'description': description,
@@ -68,10 +68,10 @@ class RoleConfig {
         'rxMessages': rxMessages,
       };
 
-  /// 메시지가 송신 가능한지 확인
+  /// Checks if message can be transmitted
   bool canTransmit(String messageName) => txMessages.contains(messageName);
 
-  /// 메시지가 수신 대상인지 확인
+  /// Checks if message should be received
   bool shouldReceive(String messageName) => rxMessages.contains(messageName);
 
   @override
@@ -79,24 +79,24 @@ class RoleConfig {
       'RoleConfig(id: $roleId, name: $name, sysId: $systemId, compId: $componentId)';
 }
 
-/// 역할 설정 로더
+/// Role configuration loader
 class RoleConfigLoader {
-  /// Assets에서 역할 설정을 로드합니다.
+  /// Loads role configuration from assets.
   ///
-  /// 반환값: roleId를 키로 하는 RoleConfig 맵과 역할 ID 순서 목록
+  /// Returns: RoleConfig map keyed by roleId and role ID order list
   static Future<RoleConfigResult> loadFromAsset(String assetPath) async {
     final jsonString = await rootBundle.loadString(assetPath);
     return _parseJson(jsonString);
   }
 
-  /// 파일에서 역할 설정을 로드합니다.
+  /// Loads role configuration from file.
   static Future<RoleConfigResult> loadFromFile(String filePath) async {
     final file = File(filePath);
     final jsonString = await file.readAsString();
     return _parseJson(jsonString);
   }
 
-  /// JSON 문자열을 파싱합니다.
+  /// Parses JSON string.
   static RoleConfigResult _parseJson(String jsonString) {
     final json = jsonDecode(jsonString) as Map<String, dynamic>;
     final roles = json['roles'] as Map<String, dynamic>?;
@@ -121,7 +121,7 @@ class RoleConfigLoader {
     return RoleConfigResult(configs: configs, roleOrder: roleOrder);
   }
 
-  /// 기본 GCS 설정
+  /// Default GCS configuration
   static RoleConfig _defaultGcsConfig() {
     return const RoleConfig(
       roleId: 'gcs',
@@ -134,7 +134,7 @@ class RoleConfigLoader {
     );
   }
 
-  /// 기본 설정을 JSON 파일로 저장합니다.
+  /// Saves default configuration to JSON file.
   static Future<void> saveDefaultConfig(String filePath) async {
     final json = {
       'roles': {
@@ -184,12 +184,12 @@ class RoleConfigLoader {
   }
 }
 
-/// 역할 설정 로드 결과
+/// Role configuration load result
 class RoleConfigResult {
-  /// roleId를 키로 하는 RoleConfig 맵
+  /// RoleConfig map keyed by roleId
   final Map<String, RoleConfig> configs;
 
-  /// JSON에 정의된 역할 순서 (UI 표시용)
+  /// Role order as defined in JSON (for UI display)
   final List<String> roleOrder;
 
   const RoleConfigResult({
@@ -197,9 +197,9 @@ class RoleConfigResult {
     required this.roleOrder,
   });
 
-  /// 첫 번째 역할 ID 반환 (기본 선택용)
+  /// Returns first role ID (for default selection)
   String get defaultRoleId => roleOrder.isNotEmpty ? roleOrder.first : 'gcs';
 
-  /// 역할 ID로 설정 조회
+  /// Gets config by role ID
   RoleConfig? getConfig(String roleId) => configs[roleId];
 }

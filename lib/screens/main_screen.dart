@@ -26,7 +26,7 @@ class MainScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 업데이트 알림 배너
+          // Update notification banner
           const _UpdateBanner(),
           _buildToolbar(context),
           const Expanded(
@@ -67,7 +67,7 @@ class MainScreen extends StatelessWidget {
   }
 }
 
-/// 업데이트 알림 배너
+/// Update notification banner
 class _UpdateBanner extends StatelessWidget {
   const _UpdateBanner();
 
@@ -85,17 +85,17 @@ class _UpdateBanner extends StatelessWidget {
           backgroundColor: Colors.blue[700],
           contentTextStyle: const TextStyle(color: Colors.white),
           content: Text(
-            '새 버전이 있습니다: v${updateInfo.latestVersion} (현재: v${updateInfo.currentVersion})',
+            'New version available: v${updateInfo.latestVersion} (Current: v${updateInfo.currentVersion})',
           ),
           leading: const Icon(Icons.system_update, color: Colors.white),
           actions: [
             TextButton(
               onPressed: () => settings.dismissUpdate(),
-              child: const Text('나중에', style: TextStyle(color: Colors.white70)),
+              child: const Text('Later', style: TextStyle(color: Colors.white70)),
             ),
             TextButton(
               onPressed: () => _showUpdateDialog(context, updateInfo),
-              child: const Text('업데이트', style: TextStyle(color: Colors.white)),
+              child: const Text('Update', style: TextStyle(color: Colors.white)),
             ),
           ],
         );
@@ -111,7 +111,7 @@ class _UpdateBanner extends StatelessWidget {
   }
 }
 
-/// 업데이트 다이얼로그
+/// Update dialog
 class _UpdateDialog extends StatefulWidget {
   final UpdateInfo updateInfo;
 
@@ -134,7 +134,7 @@ class _UpdateDialogState extends State<_UpdateDialog> {
     });
 
     try {
-      // 다운로드
+      // Download
       final zipPath = await UpdateService.downloadUpdate(
         widget.updateInfo,
         onProgress: (received, total) {
@@ -148,30 +148,30 @@ class _UpdateDialogState extends State<_UpdateDialog> {
 
       if (zipPath == null) {
         setState(() {
-          _errorMessage = '다운로드에 실패했습니다.';
+          _errorMessage = 'Download failed.';
           _isDownloading = false;
         });
         return;
       }
 
-      // 설치 (앱 종료 필요)
+      // Install (requires app restart)
       if (!mounted) return;
       
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('업데이트 설치'),
+          title: const Text('Install Update'),
           content: const Text(
-            '업데이트를 설치하려면 앱을 재시작해야 합니다.\n계속하시겠습니까?',
+            'The app needs to restart to install the update.\nDo you want to continue?',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('취소'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('재시작'),
+              child: const Text('Restart'),
             ),
           ],
         ),
@@ -180,11 +180,11 @@ class _UpdateDialogState extends State<_UpdateDialog> {
       if (confirmed == true) {
         final success = await UpdateService.installUpdate(zipPath);
         if (success) {
-          // 앱 종료
+          // Exit app
           exit(0);
         } else {
           setState(() {
-            _errorMessage = '설치에 실패했습니다.';
+            _errorMessage = 'Installation failed.';
             _isDownloading = false;
           });
         }
@@ -195,7 +195,7 @@ class _UpdateDialogState extends State<_UpdateDialog> {
       }
     } catch (e) {
       setState(() {
-        _errorMessage = '오류: $e';
+        _errorMessage = 'Error: $e';
         _isDownloading = false;
       });
     }
@@ -204,19 +204,19 @@ class _UpdateDialogState extends State<_UpdateDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('업데이트 v${widget.updateInfo.latestVersion}'),
+      title: Text('Update v${widget.updateInfo.latestVersion}'),
       content: SizedBox(
         width: 400,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('현재 버전: v${widget.updateInfo.currentVersion}'),
+            Text('Current version: v${widget.updateInfo.currentVersion}'),
             const SizedBox(height: 8),
-            Text('새 버전: v${widget.updateInfo.latestVersion}'),
+            Text('New version: v${widget.updateInfo.latestVersion}'),
             const SizedBox(height: 16),
             if (widget.updateInfo.releaseNotes.isNotEmpty) ...[
-              const Text('변경 사항:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Release Notes:', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Container(
                 constraints: const BoxConstraints(maxHeight: 150),
@@ -235,7 +235,7 @@ class _UpdateDialogState extends State<_UpdateDialog> {
               const SizedBox(height: 16),
             ],
             if (_isDownloading) ...[
-              const Text('다운로드 중...'),
+              const Text('Downloading...'),
               const SizedBox(height: 8),
               LinearProgressIndicator(value: _downloadProgress),
               const SizedBox(height: 4),
@@ -252,19 +252,19 @@ class _UpdateDialogState extends State<_UpdateDialog> {
       actions: [
         TextButton(
           onPressed: _isDownloading ? null : () => Navigator.of(context).pop(),
-          child: const Text('취소'),
+          child: const Text('Cancel'),
         ),
         if (widget.updateInfo.zipDownloadUrl != null)
           ElevatedButton(
             onPressed: _isDownloading ? null : _downloadAndInstall,
-            child: const Text('다운로드 및 설치'),
+            child: const Text('Download & Install'),
           )
         else
           ElevatedButton(
             onPressed: _isDownloading
                 ? null
                 : () => UpdateService.openDownloadPage(widget.updateInfo.downloadUrl),
-            child: const Text('다운로드 페이지 열기'),
+            child: const Text('Open Download Page'),
           ),
       ],
     );
@@ -569,16 +569,16 @@ class SettingsScreen extends StatelessWidget {
 
   Future<void> _convertSpec(BuildContext context, MavlinkState state) async {
     try {
-      // XML 폴더 선택 대화상자 표시
+      // Show XML folder selection dialog
       final directory = await getDirectoryPath(
         confirmButtonText: 'Select Folder',
       );
 
       if (directory == null) {
-        return; // 사용자가 취소
+        return; // User cancelled
       }
 
-      // 진행 표시
+      // Show progress indicator
       if (!context.mounted) return;
       
       showDialog(
@@ -595,7 +595,7 @@ class SettingsScreen extends StatelessWidget {
         ),
       );
 
-      // 선택한 폴더에서 모든 XML 파일 찾기
+      // Find all XML files in selected folder
       final dir = Directory(directory);
       final xmlFiles = await dir
           .list(recursive: true)
@@ -618,27 +618,27 @@ class SettingsScreen extends StatelessWidget {
         return;
       }
 
-      // XML 파일 경로 목록
+      // XML file path list
       final xmlPaths = xmlFiles.map((f) => f.path).toList();
 
-      // role_config.json 경로 (assets 폴더 내)
+      // role_config.json path (in assets folder)
       final currentDir = Directory.current.path;
       final roleConfigPath = '$currentDir/assets/config/role_config.json';
       final outputJsonPath = '$currentDir/assets/mavlink/messages.json';
 
-      // 변환 실행
+      // Execute conversion
       await state.convertMessageSpec(
         xmlPaths: xmlPaths,
         outputJsonPath: outputJsonPath,
         roleConfigPath: roleConfigPath,
       );
 
-      // 진행 대화상자 닫기
+      // Close progress dialog
       if (context.mounted) {
         Navigator.of(context).pop();
       }
 
-      // 성공 메시지
+      // Success message
       if (context.mounted) {
         final fileCount = xmlFiles.length;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -649,7 +649,7 @@ class SettingsScreen extends StatelessWidget {
         );
       }
     } catch (e) {
-      // 진행 대화상자가 열려 있으면 닫기
+      // Close progress dialog if open
       if (context.mounted) {
         Navigator.of(context).pop();
       }

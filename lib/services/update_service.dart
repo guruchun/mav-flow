@@ -8,18 +8,18 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/update_info.dart';
 
-/// 다운로드 진행 상황 콜백
+/// Download progress callback
 typedef DownloadProgressCallback = void Function(int received, int total);
 
-/// GitHub Release를 통한 업데이트 확인 서비스
+/// Update checking service via GitHub Releases
 ///
-/// 앱 자동 업데이트를 위해 GitHub API를 사용하여 최신 릴리즈 정보를 확인하고,
-/// 다운로드 및 업데이트를 수행합니다.
+/// Uses GitHub API to check latest release information for app auto-update,
+/// and performs download and update operations.
 class UpdateService {
-  /// GitHub 저장소 소유자
+  /// GitHub repository owner
   static const String owner = 'guruchun';
 
-  /// GitHub 저장소 이름
+  /// GitHub repository name
   static const String repo = 'mav-flow';
 
   /// GitHub API URL
@@ -28,10 +28,10 @@ class UpdateService {
 
   UpdateService._();
 
-  /// 최신 릴리즈 정보를 확인합니다.
+  /// Checks for the latest release information.
   ///
-  /// [currentVersion]은 현재 앱 버전입니다.
-  /// 성공 시 [UpdateInfo]를 반환하고, 네트워크 오류나 API 오류 시 null을 반환합니다.
+  /// [currentVersion] is the current app version.
+  /// Returns [UpdateInfo] on success, or null on network/API errors.
   static Future<UpdateInfo?> checkForUpdates(String currentVersion) async {
     try {
       final response = await http
@@ -48,11 +48,11 @@ class UpdateService {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         return UpdateInfo.fromGitHubRelease(json, currentVersion);
       } else if (response.statusCode == 403) {
-        // API rate limit 초과
+        // API rate limit exceeded
         debugPrint('GitHub API rate limit exceeded');
         return null;
       } else if (response.statusCode == 404) {
-        // 릴리즈 없음
+        // No releases found
         debugPrint('No releases found for $owner/$repo');
         return null;
       } else {
@@ -61,16 +61,16 @@ class UpdateService {
         return null;
       }
     } catch (e) {
-      // 네트워크 오류 (인터넷 연결 없음 등)
+      // Network error (no internet connection, etc.)
       debugPrint('Failed to check for updates: $e');
       return null;
     }
   }
 
-  /// 다운로드 페이지를 기본 브라우저에서 엽니다.
+  /// Opens the download page in the default browser.
   ///
-  /// [url]은 GitHub Release 페이지 URL입니다.
-  /// 성공 시 true, 실패 시 false를 반환합니다.
+  /// [url] is the GitHub Release page URL.
+  /// Returns true on success, false on failure.
   static Future<bool> openDownloadPage(String url) async {
     try {
       final uri = Uri.parse(url);
@@ -89,30 +89,30 @@ class UpdateService {
     }
   }
 
-  /// ZIP 파일을 다운로드합니다.
+  /// Downloads the ZIP file.
   ///
-  /// [updateInfo]에서 다운로드 URL을 가져옵니다.
-  /// [onProgress] 콜백으로 진행 상황을 전달합니다.
-  /// 성공 시 다운로드된 파일 경로를 반환합니다.
+  /// Gets the download URL from [updateInfo].
+  /// Progress is reported via [onProgress] callback.
+  /// Returns the downloaded file path on success.
   static Future<String?> downloadUpdate(
     UpdateInfo updateInfo, {
     DownloadProgressCallback? onProgress,
   }) async {
     try {
-      // ZIP 다운로드 URL 가져오기
+      // Get ZIP download URL
       final zipUrl = updateInfo.zipDownloadUrl;
       if (zipUrl == null) {
         debugPrint('No ZIP download URL available');
         return null;
       }
 
-      // 임시 디렉토리에 저장
+      // Save to temp directory
       final tempDir = Directory.systemTemp;
       final fileName = 'mav-flow-${updateInfo.latestVersion}-windows-x64.zip';
       final filePath = path.join(tempDir.path, fileName);
       final file = File(filePath);
 
-      // HTTP 스트림으로 다운로드
+      // Download via HTTP stream
       final request = http.Request('GET', Uri.parse(zipUrl));
       request.headers['User-Agent'] = 'mav-flow-app';
 
@@ -147,38 +147,38 @@ class UpdateService {
     }
   }
 
-  /// 다운로드된 업데이트를 설치합니다.
+  /// Installs the downloaded update.
   ///
-  /// 업데이트 스크립트를 생성하고 실행합니다.
-  /// 앱이 종료된 후 새 버전으로 교체됩니다.
+  /// Creates and runs an update script.
+  /// The app will be replaced with the new version after exit.
   static Future<bool> installUpdate(String zipPath) async {
     try {
       final appDir = Directory.current.path;
       final updateScript = path.join(Directory.systemTemp.path, 'mav-flow-update.bat');
 
-      // 업데이트 배치 스크립트 생성
+      // Create update batch script
       final script = '''
 @echo off
-echo MAV-Flow 업데이트 중...
+echo Updating MAV-Flow...
 timeout /t 2 /nobreak > nul
 
-:: 기존 파일 백업 (선택사항)
+:: Backup existing files (optional)
 :: move "$appDir" "$appDir.backup"
 
-:: ZIP 압축 해제 (PowerShell 사용)
+:: Extract ZIP (using PowerShell)
 powershell -Command "Expand-Archive -Path '$zipPath' -DestinationPath '$appDir' -Force"
 
-:: 임시 파일 정리
+:: Clean up temp files
 del "$zipPath"
 del "%~f0"
 
-:: 앱 재시작
+:: Restart app
 start "" "$appDir\\mav-flow.exe"
 ''';
 
       await File(updateScript).writeAsString(script);
 
-      // 스크립트 실행 (앱 종료 후 실행됨)
+      // Run script (executes after app exits)
       await Process.start(
         'cmd',
         ['/c', updateScript],

@@ -48,7 +48,7 @@ jobs:
           $sourcePath = "build\windows\x64\runner\Release"
           $zipName = "mav-flow-$version-windows-x64.zip"
           
-          # ZIP 아카이브 생성
+          # Create ZIP archive
           Compress-Archive -Path "$sourcePath\*" -DestinationPath $zipName -Force
           
           Write-Host "Created: $zipName"
@@ -62,10 +62,10 @@ jobs:
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
           body: |
-            ## 다운로드
-            👉 **mav-flow-${{ steps.version.outputs.VERSION }}-windows-x64.zip** 파일을 다운로드하세요.
+            ## Download
+            👉 Download **mav-flow-${{ steps.version.outputs.VERSION }}-windows-x64.zip**
             
-            (Source code zip/tar.gz는 소스코드이며, 실행 파일이 아닙니다)
+            (Source code zip/tar.gz contains source files only, not the application)
             
             ---
         env:

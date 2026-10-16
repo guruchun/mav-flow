@@ -1,40 +1,40 @@
 import 'dart:async';
 
-/// 자동 전송 설정
+/// Auto-send configuration
 ///
-/// 메시지별 자동 전송 주기를 관리합니다.
+/// Manages auto-send intervals per message.
 class AutoSendConfig {
-  /// 메시지 ID
+  /// Message ID
   final int messageId;
 
-  /// 메시지 이름
+  /// Message name
   final String messageName;
 
-  /// 활성화 여부
+  /// Enabled state
   bool enabled;
 
-  /// 전송 주기 (밀리초)
+  /// Send interval (milliseconds)
   int intervalMs;
 
-  /// 내부 타이머
+  /// Internal timer
   Timer? _timer;
 
-  /// 전송 콜백
+  /// Send callback
   void Function()? _onTick;
 
-  /// 마지막 전송 시간
+  /// Last send time
   DateTime? lastSentTime;
 
-  /// 전송 횟수
+  /// Send count
   int sendCount = 0;
 
-  /// 기본 전송 주기 (밀리초)
+  /// Default send interval (milliseconds)
   static const int defaultIntervalMs = 500;
 
-  /// 최소 전송 주기 (밀리초)
+  /// Minimum send interval (milliseconds)
   static const int minIntervalMs = 10;
 
-  /// 최대 전송 주기 (밀리초)
+  /// Maximum send interval (milliseconds)
   static const int maxIntervalMs = 60000;
 
   AutoSendConfig({
@@ -44,7 +44,7 @@ class AutoSendConfig {
     this.intervalMs = defaultIntervalMs,
   });
 
-  /// 자동 전송을 시작합니다.
+  /// Starts auto-send.
   void start(void Function() onTick) {
     stop();
     _onTick = onTick;
@@ -61,13 +61,13 @@ class AutoSendConfig {
     }
   }
 
-  /// 자동 전송을 중지합니다.
+  /// Stops auto-send.
   void stop() {
     _timer?.cancel();
     _timer = null;
   }
 
-  /// 활성화 상태를 토글합니다.
+  /// Toggles enabled state.
   void toggle(void Function() onTick) {
     enabled = !enabled;
     if (enabled) {
@@ -77,27 +77,27 @@ class AutoSendConfig {
     }
   }
 
-  /// 전송 주기를 설정합니다.
+  /// Sets send interval.
   ///
-  /// 주기는 [minIntervalMs]와 [maxIntervalMs] 범위로 제한됩니다.
+  /// Interval is clamped to [minIntervalMs] and [maxIntervalMs] range.
   void setInterval(int ms) {
     intervalMs = ms.clamp(minIntervalMs, maxIntervalMs);
 
-    // 이미 실행 중이면 타이머 재시작
+    // Restart timer if already running
     if (_timer != null && _onTick != null) {
       start(_onTick!);
     }
   }
 
-  /// 타이머가 실행 중인지 확인
+  /// Checks if timer is running
   bool get isRunning => _timer != null && _timer!.isActive;
 
-  /// 전송 횟수 초기화
+  /// Resets send count
   void resetCount() {
     sendCount = 0;
   }
 
-  /// 리소스 해제
+  /// Releases resources
   void dispose() {
     stop();
     _onTick = null;
@@ -108,27 +108,27 @@ class AutoSendConfig {
       'AutoSendConfig(msg: $messageName, enabled: $enabled, interval: ${intervalMs}ms)';
 }
 
-/// 자동 전송 관리자
+/// Auto-send manager
 ///
-/// 여러 메시지의 자동 전송을 관리합니다.
+/// Manages auto-send for multiple messages.
 class AutoSendManager {
-  /// 자동 전송 설정 맵 (메시지 ID → 설정)
+  /// Auto-send config map (message ID → config)
   final Map<int, AutoSendConfig> configs = {};
 
-  /// 전송 콜백 (메시지 ID를 인자로 받음)
+  /// Send callback (receives message ID as argument)
   final void Function(int messageId) onSendMessage;
 
   AutoSendManager({required this.onSendMessage});
 
-  /// 설정 추가
+  /// Adds config
   void addConfig(AutoSendConfig config) {
     configs[config.messageId] = config;
   }
 
-  /// 설정 가져오기
+  /// Gets config
   AutoSendConfig? getConfig(int messageId) => configs[messageId];
 
-  /// 자동 전송 토글
+  /// Toggles auto-send
   void toggle(int messageId) {
     final config = configs[messageId];
     if (config != null) {
@@ -136,7 +136,7 @@ class AutoSendManager {
     }
   }
 
-  /// 자동 전송 활성화
+  /// Enables auto-send
   void enable(int messageId) {
     final config = configs[messageId];
     if (config != null && !config.enabled) {
@@ -145,7 +145,7 @@ class AutoSendManager {
     }
   }
 
-  /// 자동 전송 비활성화
+  /// Disables auto-send
   void disable(int messageId) {
     final config = configs[messageId];
     if (config != null && config.enabled) {
@@ -154,7 +154,7 @@ class AutoSendManager {
     }
   }
 
-  /// 전송 주기 설정
+  /// Sets send interval
   void setInterval(int messageId, int intervalMs) {
     final config = configs[messageId];
     if (config != null) {
@@ -162,14 +162,14 @@ class AutoSendManager {
     }
   }
 
-  /// 모든 자동 전송 중지
+  /// Stops all auto-sends
   void stopAll() {
     for (final config in configs.values) {
       config.stop();
     }
   }
 
-  /// 모든 활성화된 설정 시작
+  /// Starts all enabled configs
   void startAll() {
     for (final config in configs.values) {
       if (config.enabled) {
@@ -178,14 +178,14 @@ class AutoSendManager {
     }
   }
 
-  /// 활성화된 설정 목록
+  /// List of enabled configs
   List<AutoSendConfig> get enabledConfigs =>
       configs.values.where((c) => c.enabled).toList();
 
-  /// 모든 설정 목록
+  /// List of all configs
   List<AutoSendConfig> get allConfigs => configs.values.toList();
 
-  /// 리소스 해제
+  /// Releases resources
   void dispose() {
     for (final config in configs.values) {
       config.dispose();

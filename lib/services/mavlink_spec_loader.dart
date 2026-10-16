@@ -6,24 +6,24 @@ import 'package:xml/xml.dart';
 
 import '../models/mavlink_message_def.dart';
 
-/// MAVLink XML 규격 파일을 파싱하여 JSON으로 변환하는 로더
+/// Loader that parses MAVLink XML spec files and converts to JSON
 ///
-/// MAVLink 표준 XML 파일(common.xml 등)을 파싱하여 앱에서 사용할 수 있는
-/// JSON 형식으로 변환합니다.
+/// Parses MAVLink standard XML files (common.xml, etc.) and converts them
+/// to JSON format usable by the app.
 class MavlinkSpecLoader {
-  /// Assets에서 JSON 규격 파일을 로드합니다. (런타임 사용)
+  /// Loads JSON spec file from assets. (for runtime use)
   ///
-  /// [assetPath]는 assets 폴더 내 상대 경로입니다.
-  /// 예: 'mavlink/messages.json'
+  /// [assetPath] is the relative path within assets folder.
+  /// Example: 'mavlink/messages.json'
   static Future<MavlinkSpec> loadFromAssetJson(String assetPath) async {
     final jsonString = await rootBundle.loadString(assetPath);
     final json = jsonDecode(jsonString) as Map<String, dynamic>;
     return MavlinkSpec.fromJson(json);
   }
 
-  /// 파일 시스템에서 JSON 규격 파일을 로드합니다.
+  /// Loads JSON spec file from filesystem.
   ///
-  /// [filePath]는 절대 경로 또는 상대 경로입니다.
+  /// [filePath] is an absolute or relative path.
   static Future<MavlinkSpec> loadFromFileJson(String filePath) async {
     final file = File(filePath);
     final jsonString = await file.readAsString();
@@ -31,10 +31,10 @@ class MavlinkSpecLoader {
     return MavlinkSpec.fromJson(json);
   }
 
-  /// MAVLink XML 파일들을 파싱하여 통합된 MavlinkSpec을 생성합니다.
+  /// Parses MAVLink XML files and creates a unified MavlinkSpec.
   ///
-  /// [xmlPaths]는 XML 파일 경로 목록입니다.
-  /// 여러 XML 파일을 지정하면 모든 메시지와 열거형이 통합됩니다.
+  /// [xmlPaths] is a list of XML file paths.
+  /// If multiple XML files are specified, all messages and enums are merged.
   static Future<MavlinkSpec> loadFromXmlFiles(List<String> xmlPaths) async {
     final allMessages = <MavlinkMessageDef>[];
     final allEnums = <MavlinkEnumDef>[];
@@ -44,7 +44,7 @@ class MavlinkSpecLoader {
     for (final path in xmlPaths) {
       final file = File(path);
       if (!await file.exists()) {
-        throw FileSystemException('XML 파일을 찾을 수 없습니다', path);
+        throw FileSystemException('XML file not found', path);
       }
 
       final xmlString = await file.readAsString();
@@ -57,7 +57,7 @@ class MavlinkSpecLoader {
       allEnums.addAll(result.enums);
     }
 
-    // 중복 제거 (같은 ID의 메시지는 나중 것이 우선)
+    // Remove duplicates (later messages with same ID take precedence)
     final messagesById = <int, MavlinkMessageDef>{};
     for (final msg in allMessages) {
       messagesById[msg.id] = msg;
@@ -76,11 +76,11 @@ class MavlinkSpecLoader {
     );
   }
 
-  /// XML 파일을 파싱하여 JSON 파일로 저장합니다.
+  /// Parses XML files and saves to JSON file.
   ///
-  /// [xmlPaths]는 XML 파일 경로 목록입니다.
-  /// [outputJsonPath]는 출력 JSON 파일 경로입니다.
-  /// [messageFilter]가 제공되면 해당 메시지 이름만 포함합니다.
+  /// [xmlPaths] is a list of XML file paths.
+  /// [outputJsonPath] is the output JSON file path.
+  /// If [messageFilter] is provided, only those message names are included.
   static Future<void> convertXmlToJson({
     required List<String> xmlPaths,
     required String outputJsonPath,
@@ -88,7 +88,7 @@ class MavlinkSpecLoader {
   }) async {
     final spec = await loadFromXmlFiles(xmlPaths);
     
-    // 필터가 있으면 해당 메시지만 추출
+    // If filter is provided, extract only those messages
     final filteredSpec = messageFilter != null
         ? spec.filterByMessages(messageFilter)
         : spec;
@@ -101,9 +101,9 @@ class MavlinkSpecLoader {
     await outputFile.writeAsString(jsonString);
   }
 
-  /// role_config.json에서 모든 메시지 이름을 추출합니다.
+  /// Extracts all message names from role_config.json.
   ///
-  /// 모든 역할의 txMessages와 rxMessages를 합집합으로 반환합니다.
+  /// Returns union of all roles' txMessages and rxMessages.
   static Future<Set<String>> extractMessageNamesFromRoleConfig(
       String roleConfigPath) async {
     final file = File(roleConfigPath);
@@ -131,7 +131,7 @@ class MavlinkSpecLoader {
     return messageNames;
   }
 
-  /// Assets에서 role_config.json의 메시지 이름을 추출합니다.
+  /// Extracts message names from role_config.json in assets.
   static Future<Set<String>> extractMessageNamesFromRoleConfigAsset(
       String assetPath) async {
     final jsonString = await rootBundle.loadString(assetPath);
@@ -158,11 +158,11 @@ class MavlinkSpecLoader {
     return messageNames;
   }
 
-  /// XML 문서를 파싱합니다.
+  /// Parses XML document.
   static _ParseResult _parseXmlDocument(XmlDocument document) {
     final mavlink = document.findElements('mavlink').first;
 
-    // 버전 정보
+    // Version info
     int version = 2;
     int dialect = 0;
 
@@ -176,7 +176,7 @@ class MavlinkSpecLoader {
       dialect = int.tryParse(dialectElement.innerText) ?? 0;
     }
 
-    // 열거형 파싱
+    // Parse enums
     final enums = <MavlinkEnumDef>[];
     final enumsElement = mavlink.findElements('enums').firstOrNull;
     if (enumsElement != null) {
@@ -185,7 +185,7 @@ class MavlinkSpecLoader {
       }
     }
 
-    // 메시지 파싱
+    // Parse messages
     final messages = <MavlinkMessageDef>[];
     final messagesElement = mavlink.findElements('messages').firstOrNull;
     if (messagesElement != null) {
@@ -202,7 +202,7 @@ class MavlinkSpecLoader {
     );
   }
 
-  /// 열거형 XML 요소를 파싱합니다.
+  /// Parses enum XML element.
   static MavlinkEnumDef _parseEnum(XmlElement element) {
     final name = element.getAttribute('name') ?? '';
     final bitmask = element.getAttribute('bitmask') == 'true';
@@ -240,7 +240,7 @@ class MavlinkSpecLoader {
     );
   }
 
-  /// 메시지 XML 요소를 파싱합니다.
+  /// Parses message XML element.
   static MavlinkMessageDef _parseMessage(XmlElement element) {
     final id = int.tryParse(element.getAttribute('id') ?? '0') ?? 0;
     final name = element.getAttribute('name') ?? '';
@@ -251,7 +251,7 @@ class MavlinkSpecLoader {
       description = descElement.innerText.trim();
     }
 
-    // 필드 파싱 (순서 유지)
+    // Parse fields (maintain order)
     final fields = <MavlinkFieldDef>[];
     int offset = 0;
 
@@ -261,11 +261,11 @@ class MavlinkSpecLoader {
       offset += field.size;
     }
 
-    // 필드 재정렬 (MAVLink 직렬화 순서: 크기 내림차순, 같은 크기면 원래 순서)
-    // 실제 직렬화에서는 큰 타입이 먼저 오도록 재정렬됨
+    // Reorder fields (MAVLink serialization order: size descending, same size keeps original order)
+    // In actual serialization, larger types come first
     final sortedFields = _sortFieldsForSerialization(fields);
 
-    // 오프셋 재계산
+    // Recalculate offsets
     int newOffset = 0;
     final fieldsWithOffset = <MavlinkFieldDef>[];
     for (final field in sortedFields) {
@@ -282,7 +282,7 @@ class MavlinkSpecLoader {
       newOffset += field.size;
     }
 
-    // CRC Extra 계산
+    // Calculate CRC Extra
     final crcExtra = _calculateCrcExtra(name, fieldsWithOffset);
 
     return MavlinkMessageDef(
@@ -295,7 +295,7 @@ class MavlinkSpecLoader {
     );
   }
 
-  /// 필드 XML 요소를 파싱합니다.
+  /// Parses field XML element.
   static MavlinkFieldDef _parseField(XmlElement element, int offset) {
     final type = element.getAttribute('type') ?? 'uint8_t';
     final name = element.getAttribute('name') ?? '';
@@ -308,7 +308,7 @@ class MavlinkSpecLoader {
       description = descText;
     }
 
-    // 배열 길이 파싱 (예: "char[16]" → arrayLength=16)
+    // Parse array length (e.g., "char[16]" → arrayLength=16)
     int arrayLength = 0;
     String baseType = type;
 
@@ -332,14 +332,14 @@ class MavlinkSpecLoader {
     );
   }
 
-  /// 필드 크기를 계산합니다.
+  /// Calculates field size.
   static int _calculateFieldSize(String baseType, int arrayLength) {
     final count = arrayLength > 0 ? arrayLength : 1;
     final unitSize = _getTypeSize(baseType);
     return unitSize * count;
   }
 
-  /// 기본 타입의 크기를 반환합니다.
+  /// Returns base type size.
   static int _getTypeSize(String type) {
     switch (type) {
       case 'int8_t':
@@ -362,56 +362,56 @@ class MavlinkSpecLoader {
     }
   }
 
-  /// MAVLink 직렬화 순서에 맞게 필드를 재정렬합니다.
+  /// Reorders fields for MAVLink serialization order.
   ///
-  /// MAVLink는 메모리 정렬을 위해 필드를 크기 내림차순으로 재정렬합니다.
+  /// MAVLink reorders fields by size descending for memory alignment.
   static List<MavlinkFieldDef> _sortFieldsForSerialization(
       List<MavlinkFieldDef> fields) {
-    // 확장 필드(extensions 이후)는 별도 처리 필요하지만 여기서는 단순화
+    // Extension fields (after extensions) need separate handling but simplified here
     final sorted = List<MavlinkFieldDef>.from(fields);
 
-    // 타입별 기본 크기 기준으로 정렬 (내림차순)
+    // Sort by base type size (descending)
     sorted.sort((a, b) {
       final sizeA = _getTypeSize(a.baseType);
       final sizeB = _getTypeSize(b.baseType);
       if (sizeA != sizeB) {
-        return sizeB.compareTo(sizeA); // 내림차순
+        return sizeB.compareTo(sizeA); // Descending
       }
-      // 같은 크기면 원래 순서 유지 (stable sort가 아니므로 인덱스 비교는 어려움)
+      // Same size keeps original order (index comparison difficult as not stable sort)
       return 0;
     });
 
     return sorted;
   }
 
-  /// CRC Extra 값을 계산합니다.
+  /// Calculates CRC Extra value.
   ///
-  /// MAVLink 메시지 검증을 위한 CRC Extra 값을 계산합니다.
-  /// 계산식: CRC-16/MCRF4XX(message_name + " " + field_types + field_names)
+  /// Calculates CRC Extra value for MAVLink message verification.
+  /// Formula: CRC-16/MCRF4XX(message_name + " " + field_types + field_names)
   static int _calculateCrcExtra(String messageName, List<MavlinkFieldDef> fields) {
-    // X25 CRC 초기화
+    // X25 CRC initialization
     int crc = 0xFFFF;
 
-    // 메시지 이름 + ' '
+    // Message name + ' '
     for (final char in '$messageName '.codeUnits) {
       crc = _crcAccumulate(char, crc);
     }
 
-    // 각 필드의 타입과 이름
+    // Each field's type and name
     for (final field in fields) {
       final baseType = field.baseType;
 
-      // 타입 문자열
+      // Type string
       for (final char in '$baseType '.codeUnits) {
         crc = _crcAccumulate(char, crc);
       }
 
-      // 필드 이름
+      // Field name
       for (final char in '$field.name '.codeUnits) {
         crc = _crcAccumulate(char, crc);
       }
 
-      // 배열이면 배열 크기도 포함
+      // Include array size if array
       if (field.isArray) {
         crc = _crcAccumulate(field.arrayLength, crc);
       }
@@ -420,7 +420,7 @@ class MavlinkSpecLoader {
     return ((crc & 0xFF) ^ (crc >> 8)) & 0xFF;
   }
 
-  /// CRC-16/MCRF4XX 누적 계산
+  /// CRC-16/MCRF4XX accumulate calculation
   static int _crcAccumulate(int byte, int crc) {
     final tmp = byte ^ (crc & 0xFF);
     final tmp2 = tmp ^ ((tmp << 4) & 0xFF);
@@ -428,7 +428,7 @@ class MavlinkSpecLoader {
   }
 }
 
-/// XML 파싱 결과
+/// XML parsing result
 class _ParseResult {
   final int version;
   final int dialect;

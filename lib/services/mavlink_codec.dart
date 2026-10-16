@@ -3,22 +3,22 @@ import 'dart:typed_data';
 import '../models/mavlink_frame.dart';
 import '../models/mavlink_message_def.dart';
 
-/// MAVLink 메시지 직렬화/역직렬화 코덱
+/// MAVLink message serialization/deserialization codec
 ///
-/// 메시지 필드 값을 MAVLink v2 바이너리 형식으로 직렬화합니다.
+/// Serializes message field values to MAVLink v2 binary format.
 class MavlinkCodec {
-  /// 메시지 규격
+  /// Message specification
   final MavlinkSpec spec;
 
   MavlinkCodec(this.spec);
 
-  /// 필드 값 맵을 MAVLink v2 바이너리 메시지로 직렬화합니다.
+  /// Serializes a field value map to MAVLink v2 binary message.
   ///
-  /// [messageId]는 메시지 ID입니다.
-  /// [systemId]는 송신자 시스템 ID입니다.
-  /// [componentId]는 송신자 컴포넌트 ID입니다.
-  /// [sequence]는 시퀀스 번호입니다 (0-255).
-  /// [fieldValues]는 필드 이름과 값의 맵입니다.
+  /// [messageId] is the message ID.
+  /// [systemId] is the sender system ID.
+  /// [componentId] is the sender component ID.
+  /// [sequence] is the sequence number (0-255).
+  /// [fieldValues] is a map of field names to values.
   Uint8List encode({
     required int messageId,
     required int systemId,
@@ -28,20 +28,20 @@ class MavlinkCodec {
   }) {
     final messageDef = spec.getMessage(messageId);
     if (messageDef == null) {
-      throw ArgumentError('알 수 없는 메시지 ID: $messageId');
+      throw ArgumentError('Unknown message ID: $messageId');
     }
 
-    // 페이로드 생성
+    // Create payload
     final payload = _encodePayload(messageDef, fieldValues);
 
-    // 프레임 구성
+    // Build frame
     final frameSize = MavlinkConstants.v2HeaderSize +
         payload.length +
         MavlinkConstants.checksumSize;
     final frame = Uint8List(frameSize);
     final bd = ByteData.sublistView(frame);
 
-    // 헤더
+    // Header
     bd.setUint8(0, MavlinkConstants.v2Magic);
     bd.setUint8(1, payload.length);
     bd.setUint8(2, 0); // incompatFlags
@@ -50,16 +50,16 @@ class MavlinkCodec {
     bd.setUint8(5, systemId);
     bd.setUint8(6, componentId);
 
-    // 24-bit 메시지 ID (Little Endian)
+    // 24-bit message ID (Little Endian)
     bd.setUint8(7, messageId & 0xFF);
     bd.setUint8(8, (messageId >> 8) & 0xFF);
     bd.setUint8(9, (messageId >> 16) & 0xFF);
 
-    // 페이로드 복사
+    // Copy payload
     frame.setRange(MavlinkConstants.v2HeaderSize,
         MavlinkConstants.v2HeaderSize + payload.length, payload);
 
-    // CRC 계산 및 추가
+    // Calculate and add CRC
     final crc = _calculateCrc(frame, payload.length, messageDef.crcExtra);
     final checksumOffset = MavlinkConstants.v2HeaderSize + payload.length;
     bd.setUint16(checksumOffset, crc, Endian.little);
@@ -67,7 +67,7 @@ class MavlinkCodec {
     return frame;
   }
 
-  /// 메시지 이름으로 인코딩합니다.
+  /// Encodes by message name.
   Uint8List encodeByName({
     required String messageName,
     required int systemId,
@@ -77,7 +77,7 @@ class MavlinkCodec {
   }) {
     final messageDef = spec.getMessageByName(messageName);
     if (messageDef == null) {
-      throw ArgumentError('알 수 없는 메시지 이름: $messageName');
+      throw ArgumentError('Unknown message name: $messageName');
     }
 
     return encode(
@@ -89,7 +89,7 @@ class MavlinkCodec {
     );
   }
 
-  /// 페이로드를 인코딩합니다.
+  /// Encodes payload.
   Uint8List _encodePayload(
       MavlinkMessageDef messageDef, Map<String, dynamic> fieldValues) {
     final payload = Uint8List(messageDef.minPayloadLength);
@@ -102,17 +102,17 @@ class MavlinkCodec {
       try {
         _writeFieldValue(bd, field, value);
       } catch (e) {
-        // 필드 쓰기 실패 시 무시 (기본값 0 유지)
+        // Ignore field write failures (keep default value 0)
       }
     }
 
-    // 후행 0 제거 (MAVLink truncation)
+    // Remove trailing zeros (MAVLink truncation)
     int truncatedLength = payload.length;
     while (truncatedLength > 0 && payload[truncatedLength - 1] == 0) {
       truncatedLength--;
     }
 
-    // 최소 1바이트는 유지
+    // Keep at least 1 byte
     if (truncatedLength == 0 && payload.isNotEmpty) {
       truncatedLength = 1;
     }
@@ -120,7 +120,7 @@ class MavlinkCodec {
     return payload.sublist(0, truncatedLength);
   }
 
-  /// 필드 값을 씁니다.
+  /// Writes field value.
   void _writeFieldValue(ByteData bd, MavlinkFieldDef field, dynamic value) {
     if (field.isArray) {
       _writeArrayField(bd, field, value);
@@ -129,7 +129,7 @@ class MavlinkCodec {
     }
   }
 
-  /// 스칼라 필드 값을 씁니다.
+  /// Writes scalar field value.
   void _writeScalarField(ByteData bd, MavlinkFieldDef field, dynamic value) {
     final offset = field.offset;
     final numValue = (value is num) ? value : 0;
@@ -169,11 +169,11 @@ class MavlinkCodec {
     }
   }
 
-  /// 배열 필드 값을 씁니다.
+  /// Writes array field value.
   void _writeArrayField(ByteData bd, MavlinkFieldDef field, dynamic value) {
     final baseType = field.baseType;
 
-    // char 배열 (문자열)
+    // char array (string)
     if (baseType == 'char' && value is String) {
       final bytes = value.codeUnits;
       for (int i = 0; i < field.arrayLength && i < bytes.length; i++) {
@@ -182,7 +182,7 @@ class MavlinkCodec {
       return;
     }
 
-    // 숫자 배열
+    // Numeric array
     if (value is List) {
       final unitSize = _getTypeSize(baseType);
       for (int i = 0; i < field.arrayLength && i < value.length; i++) {
@@ -192,7 +192,7 @@ class MavlinkCodec {
     }
   }
 
-  /// 지정된 오프셋에 값을 씁니다.
+  /// Writes value at specified offset.
   void _writeValueAtOffset(ByteData bd, int offset, String type, dynamic value) {
     final numValue = (value is num) ? value : 0;
 
@@ -230,16 +230,16 @@ class MavlinkCodec {
     }
   }
 
-  /// CRC-16/MCRF4XX를 계산합니다.
+  /// Calculates CRC-16/MCRF4XX.
   int _calculateCrc(Uint8List frame, int payloadLength, int crcExtra) {
     int crc = 0xFFFF;
 
-    // 헤더 (magic 제외, 1~9 바이트)
+    // Header (excluding magic, bytes 1-9)
     for (int i = 1; i < MavlinkConstants.v2HeaderSize; i++) {
       crc = _crcAccumulate(frame[i], crc);
     }
 
-    // 페이로드
+    // Payload
     for (int i = 0; i < payloadLength; i++) {
       crc = _crcAccumulate(frame[MavlinkConstants.v2HeaderSize + i], crc);
     }
@@ -250,14 +250,14 @@ class MavlinkCodec {
     return crc;
   }
 
-  /// CRC-16/MCRF4XX 누적 계산
+  /// CRC-16/MCRF4XX accumulate calculation
   int _crcAccumulate(int byte, int crc) {
     final tmp = byte ^ (crc & 0xFF);
     final tmp2 = tmp ^ ((tmp << 4) & 0xFF);
     return ((crc >> 8) ^ (tmp2 << 8) ^ (tmp2 << 3) ^ (tmp2 >> 4)) & 0xFFFF;
   }
 
-  /// 타입 크기를 반환합니다.
+  /// Returns type size.
   int _getTypeSize(String type) {
     switch (type) {
       case 'int8_t':

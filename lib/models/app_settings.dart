@@ -34,20 +34,20 @@ class AppSettings extends ChangeNotifier {
   bool _isCheckingUpdate = false;
   bool _updateDismissed = false;
 
-  /// 업데이트 정보 (null이면 아직 확인 안 됨)
+  /// Update info (null if not checked yet)
   UpdateInfo? get updateInfo => _updateInfo;
 
-  /// 업데이트 확인 중인지 여부
+  /// Whether update check is in progress
   bool get isCheckingUpdate => _isCheckingUpdate;
 
-  /// 업데이트 알림이 닫혔는지 여부
+  /// Whether update notification has been dismissed
   bool get updateDismissed => _updateDismissed;
 
-  /// 업데이트가 가능한지 여부 (알림 표시용)
+  /// Whether update is available (for notification display)
   bool get hasAvailableUpdate =>
       _updateInfo != null && _updateInfo!.hasUpdate && !_updateDismissed;
 
-  /// 업데이트를 확인합니다.
+  /// Check for updates
   Future<void> checkForUpdates(String currentVersion) async {
     if (_isCheckingUpdate) return;
 
@@ -63,13 +63,13 @@ class AppSettings extends ChangeNotifier {
     }
   }
 
-  /// 업데이트 알림을 닫습니다.
+  /// Dismiss update notification
   void dismissUpdate() {
     _updateDismissed = true;
     notifyListeners();
   }
 
-  /// 업데이트 상태를 초기화합니다.
+  /// Reset update state
   void resetUpdateState() {
     _updateInfo = null;
     _updateDismissed = false;

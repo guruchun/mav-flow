@@ -3,69 +3,69 @@ import 'dart:typed_data';
 import '../models/mavlink_frame.dart';
 import '../models/mavlink_message_def.dart';
 
-/// MAVLink v2 메시지 파서
+/// MAVLink v2 message parser
 ///
-/// 바이트 스트림에서 MAVLink 프레임을 추출하고 페이로드를 파싱합니다.
+/// Extracts MAVLink frames from byte stream and parses payload.
 class MavlinkParser {
-  /// 메시지 규격
+  /// Message specification
   final MavlinkSpec spec;
 
-  /// 불완전한 데이터 버퍼
+  /// Incomplete data buffer
   final List<int> _buffer = [];
 
-  /// 파싱 통계
+  /// Parsing statistics
   int _validFrames = 0;
   int _crcErrors = 0;
   int _unknownMessages = 0;
 
   MavlinkParser(this.spec);
 
-  /// 유효한 프레임 수
+  /// Valid frame count
   int get validFrames => _validFrames;
 
-  /// CRC 오류 수
+  /// CRC error count
   int get crcErrors => _crcErrors;
 
-  /// 알 수 없는 메시지 수
+  /// Unknown message count
   int get unknownMessages => _unknownMessages;
 
-  /// 통계 초기화
+  /// Resets statistics
   void resetStats() {
     _validFrames = 0;
     _crcErrors = 0;
     _unknownMessages = 0;
   }
 
-  /// 바이트 스트림에서 완전한 MAVLink 프레임을 추출합니다.
+  /// Extracts complete MAVLink frames from byte stream.
   ///
-  /// 불완전한 데이터는 내부 버퍼에 유지되어 다음 호출 시 결합됩니다.
+  /// Incomplete data is kept in internal buffer and combined on next call.
   List<MavlinkFrame> extractFrames(Uint8List data) {
     _buffer.addAll(data);
     final frames = <MavlinkFrame>[];
 
     while (_buffer.isNotEmpty) {
-      // 매직 바이트 찾기
+      // Find magic byte
       final magicIndex = _findMagicByte();
       if (magicIndex < 0) {
         _buffer.clear();
         break;
       }
 
-      // 매직 바이트 앞의 데이터 버리기
+      // Discard data before magic byte
       if (magicIndex > 0) {
         _buffer.removeRange(0, magicIndex);
       }
 
-      // 최소 헤더 크기 확인
+      // Check minimum header size
       if (_buffer.length < MavlinkConstants.v2HeaderSize) {
-        break; // 더 많은 데이터 필요
+        break; // Need more data
       }
 
       final magic = _buffer[0];
       final isV2 = magic == MavlinkConstants.v2Magic;
 
       if (!isV2) {
-        // v1은 현재 지원하지 않음, 다음 바이트로 이동
+        // v1 not currently supported, move to next byte
         _buffer.removeAt(0);
         continue;
       }
@@ -74,22 +74,22 @@ class MavlinkParser {
       final incompatFlags = _buffer[2];
       final hasSignature = (incompatFlags & MavlinkConstants.incompatFlagSigned) != 0;
 
-      // 전체 프레임 크기 계산
+      // Calculate total frame size
       final frameSize = MavlinkConstants.v2HeaderSize +
           payloadLength +
           MavlinkConstants.checksumSize +
           (hasSignature ? MavlinkConstants.signatureSize : 0);
 
-      // 완전한 프레임인지 확인
+      // Check if complete frame
       if (_buffer.length < frameSize) {
-        break; // 더 많은 데이터 필요
+        break; // Need more data
       }
 
-      // 프레임 추출
+      // Extract frame
       final frameBytes = Uint8List.fromList(_buffer.sublist(0, frameSize));
       _buffer.removeRange(0, frameSize);
 
-      // 프레임 파싱
+      // Parse frame
       final frame = _parseFrame(frameBytes);
       if (frame != null) {
         frames.add(frame);
@@ -99,7 +99,7 @@ class MavlinkParser {
     return frames;
   }
 
-  /// 버퍼에서 MAVLink 매직 바이트를 찾습니다.
+  /// Finds MAVLink magic byte in buffer.
   int _findMagicByte() {
     for (int i = 0; i < _buffer.length; i++) {
       if (_buffer[i] == MavlinkConstants.v2Magic ||
@@ -110,7 +110,7 @@ class MavlinkParser {
     return -1;
   }
 
-  /// 바이트 배열에서 MAVLink 프레임을 파싱합니다.
+  /// Parses MAVLink frame from byte array.
   MavlinkFrame? _parseFrame(Uint8List bytes) {
     final bd = ByteData.sublistView(bytes);
 
@@ -122,20 +122,20 @@ class MavlinkParser {
     final systemId = bd.getUint8(5);
     final componentId = bd.getUint8(6);
 
-    // 24-bit 메시지 ID (Little Endian)
+    // 24-bit message ID (Little Endian)
     final messageId = bd.getUint8(7) |
         (bd.getUint8(8) << 8) |
         (bd.getUint8(9) << 16);
 
-    // 페이로드
+    // Payload
     final payloadStart = MavlinkConstants.v2HeaderSize;
     final payload = bytes.sublist(payloadStart, payloadStart + payloadLength);
 
-    // 체크섬 (Little Endian)
+    // Checksum (Little Endian)
     final checksumOffset = payloadStart + payloadLength;
     final checksum = bd.getUint16(checksumOffset, Endian.little);
 
-    // 서명 (옵션)
+    // Signature (optional)
     Uint8List? signature;
     if ((incompatFlags & MavlinkConstants.incompatFlagSigned) != 0) {
       final sigOffset = checksumOffset + MavlinkConstants.checksumSize;
@@ -157,7 +157,7 @@ class MavlinkParser {
       rawBytes: bytes,
     );
 
-    // CRC 검증
+    // CRC verification
     if (!validateCrc(frame)) {
       _crcErrors++;
       return null;
@@ -167,12 +167,12 @@ class MavlinkParser {
     return frame;
   }
 
-  /// MAVLink 프레임의 CRC를 검증합니다.
+  /// Validates CRC of MAVLink frame.
   bool validateCrc(MavlinkFrame frame) {
     final messageDef = spec.getMessage(frame.messageId);
     if (messageDef == null) {
       _unknownMessages++;
-      // 알 수 없는 메시지는 CRC 검증 불가, 일단 통과
+      // Unknown message cannot verify CRC, pass for now
       return true;
     }
 
@@ -180,16 +180,16 @@ class MavlinkParser {
     return calculatedCrc == frame.checksum;
   }
 
-  /// CRC-16/MCRF4XX를 계산합니다.
+  /// Calculates CRC-16/MCRF4XX.
   int calculateCrc(MavlinkFrame frame, int crcExtra) {
     int crc = 0xFFFF;
 
-    // 헤더 (magic 제외, 1~9 바이트)
+    // Header (excluding magic, bytes 1-9)
     for (int i = 1; i < MavlinkConstants.v2HeaderSize; i++) {
       crc = _crcAccumulate(frame.rawBytes[i], crc);
     }
 
-    // 페이로드
+    // Payload
     for (final byte in frame.payload) {
       crc = _crcAccumulate(byte, crc);
     }
@@ -200,16 +200,16 @@ class MavlinkParser {
     return crc;
   }
 
-  /// CRC-16/MCRF4XX 누적 계산
+  /// CRC-16/MCRF4XX accumulate calculation
   int _crcAccumulate(int byte, int crc) {
     final tmp = byte ^ (crc & 0xFF);
     final tmp2 = tmp ^ ((tmp << 4) & 0xFF);
     return ((crc >> 8) ^ (tmp2 << 8) ^ (tmp2 << 3) ^ (tmp2 >> 4)) & 0xFFFF;
   }
 
-  /// 페이로드를 파싱하여 필드 값 맵을 반환합니다.
+  /// Parses payload and returns field value map.
   ///
-  /// 키는 "{MessageName}.{FieldName}" 형식의 TAG입니다.
+  /// Keys are TAGs in "{MessageName}.{FieldName}" format.
   Map<String, dynamic> parsePayload(MavlinkFrame frame) {
     final messageDef = spec.getMessage(frame.messageId);
     if (messageDef == null) {
@@ -226,7 +226,7 @@ class MavlinkParser {
         final value = _readFieldValue(bd, field);
         result[tag] = value;
       } catch (e) {
-        // 필드 읽기 실패 시 기본값
+        // Default value on field read failure
         result[tag] = null;
       }
     }
@@ -234,7 +234,7 @@ class MavlinkParser {
     return result;
   }
 
-  /// 필드 값을 읽습니다.
+  /// Reads field value.
   dynamic _readFieldValue(ByteData bd, MavlinkFieldDef field) {
     if (field.offset >= bd.lengthInBytes) {
       return null;
@@ -247,7 +247,7 @@ class MavlinkParser {
     return _readScalarField(bd, field);
   }
 
-  /// 스칼라 필드 값을 읽습니다.
+  /// Reads scalar field value.
   dynamic _readScalarField(ByteData bd, MavlinkFieldDef field) {
     final offset = field.offset;
 
@@ -282,11 +282,11 @@ class MavlinkParser {
     }
   }
 
-  /// 배열 필드 값을 읽습니다.
+  /// Reads array field value.
   dynamic _readArrayField(ByteData bd, MavlinkFieldDef field) {
     final baseType = field.baseType;
 
-    // char 배열은 문자열로 변환
+    // char array converts to string
     if (baseType == 'char') {
       final bytes = <int>[];
       for (int i = 0; i < field.arrayLength; i++) {
@@ -299,7 +299,7 @@ class MavlinkParser {
       return String.fromCharCodes(bytes);
     }
 
-    // 숫자 배열
+    // Numeric array
     final values = <num>[];
     final unitSize = _getTypeSize(baseType);
 
@@ -316,7 +316,7 @@ class MavlinkParser {
     return values;
   }
 
-  /// 지정된 오프셋에서 값을 읽습니다.
+  /// Reads value at specified offset.
   num? _readValueAtOffset(ByteData bd, int offset, String type) {
     switch (type) {
       case 'int8_t':
@@ -344,7 +344,7 @@ class MavlinkParser {
     }
   }
 
-  /// 타입 크기를 반환합니다.
+  /// Returns type size.
   int _getTypeSize(String type) {
     switch (type) {
       case 'int8_t':
@@ -367,7 +367,7 @@ class MavlinkParser {
     }
   }
 
-  /// 버퍼를 비웁니다.
+  /// Clears buffer.
   void clearBuffer() {
     _buffer.clear();
   }
