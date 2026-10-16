@@ -61,5 +61,12 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
+          body: |
+            ## 다운로드
+            👉 **mav-flow-${{ steps.version.outputs.VERSION }}-windows-x64.zip** 파일을 다운로드하세요.
+            
+            (Source code zip/tar.gz는 소스코드이며, 실행 파일이 아닙니다)
+            
+            ---
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

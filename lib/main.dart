@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import 'models/app_settings.dart';
@@ -6,9 +7,20 @@ import 'models/mavlink_state.dart';
 import 'screens/main_screen.dart';
 import 'theme/app_theme.dart';
 
-const String appVersion = '1.0.0';
+/// 앱 버전 (런타임에 package_info_plus에서 로드)
+String appVersion = '1.0.0';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // pubspec.yaml에서 버전 정보 로드
+  try {
+    final packageInfo = await PackageInfo.fromPlatform();
+    appVersion = packageInfo.version;
+  } catch (e) {
+    debugPrint('Failed to load package info: $e');
+  }
+
   runApp(
     MultiProvider(
       providers: [

@@ -1,21 +1,75 @@
-﻿# mav-flow
+﻿# MAV-Flow
 
-MG3 I/F의 메시지를 모사(생성)하거나 파싱하여 내용을 보여주는 프로그램
+**MAV-Flow** is a MAVLink protocol-based message transceiver tool. It can communicate with real hardware devices or simulate peripheral devices for system testing.
 
-## 빌드 및 실행
+## Key Features
 
-```bash
+- 🔄 **MAVLink v2 Message Transceiver** - Real-time communication via serial port
+- 📊 **Data Table Monitoring** - Real-time display of received message field values
+- ✏️ **Message Editing & Transmission** - Edit field values, manual/auto send
+- 🎭 **Role-based Configuration** - Configure TX/RX messages per role (GCS, FCC, MC, GEN3)
+- 🔧 **XML → JSON Conversion** - Convert MAVLink XML specs to app-compatible JSON
+- 🌙 **Dark Theme Support** - Light/Dark theme selection
+- 🔄 **Auto Update** - In-app updates via GitHub Releases
+
+## Download
+
+[**Download Latest Version**](https://github.com/guruchun/mav-flow/releases/latest)
+
+Download `mav-flow-x.x.x-windows-x64.zip`, extract it, and run `mav-flow.exe`.
+
+## Quick Start
+
+1. **Select Role** - Choose a role (GCS, FCC, etc.) from the toolbar.
+2. **Connect Serial Port** - Select port and baud rate, then click Connect.
+3. **Receive Messages** - View received messages in the left RX Data panel.
+4. **Send Messages** - Edit field values in the right TX Data panel and click Send.
+
+## Screen Layout
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  [Role ▼]  [Port ▼]  [Baud ▼]  [Connect]                [⚙]     │
+├───────────────────────────┬─────────────────────────────────────┤
+│       RX Data             │            TX Data                  │
+│  (Received messages)      │      (Edit & send messages)         │
+├───────────────────────────┴─────────────────────────────────────┤
+│  ● Connected | RX: 1234 | TX: 56 | 10.0 Hz | Role: GCS          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Use Cases
+
+MAV-Flow can run multiple instances simultaneously to create various test environments:
+
+- **Instance 1**: DEV role (for real H/W device)
+- **Instance 2**: FCC role (simulation)
+- **Instance 3**: GCS role (simulation)
+
+This enables testing communication between a real device and virtual devices.
+
+## Documentation
+
+- 📖 [**User Guide (HowToUse.md)**](docs/HowToUse.md)
+
+## System Requirements
+
+- Windows 10/11 (x64)
+- Serial port (including USB-to-Serial adapters)
+
+## Build (For Developers)
+
+```powershell
+# Install dependencies
 flutter pub get
+
+# Run
 flutter run -d windows
+
+# Release build
+.\scripts\build-release.ps1
 ```
 
-## 배포파일 생성
+## License
 
-Flutter Windows Desktop 배포 방법
-```bash
-cd D:\{github_dir}\mav-flow
-flutter build windows --release
-```
-출력경로: build\windows\x64\runner\Release\
-
-배포방법: Release 폴더를 zip으로 압축하여 배포
+MIT License
