@@ -7,7 +7,7 @@
 - 🔄 **MAVLink v2 Message Transceiver** - Real-time communication via serial port
 - 📊 **Data Table Monitoring** - Real-time display of received message field values
 - ✏️ **Message Editing & Transmission** - Edit field values, manual/auto send
-- 🎭 **Role-based Configuration** - Configure TX/RX messages per role (GCS, FCC, MC, GEN3)
+- 🎭 **Role-based Configuration** - Configure TX/RX messages per role (GCS, FCC, etc.)
 - 🔧 **XML → JSON Conversion** - Convert MAVLink XML specs to app-compatible JSON
 - 🌙 **Dark Theme Support** - Light/Dark theme selection
 - 🔄 **Auto Update** - In-app updates via GitHub Releases
@@ -33,7 +33,7 @@ Download `mav-flow-x.x.x-windows-x64.zip`, extract it, and run `mav-flow.exe`.
 
 MAV-Flow can run multiple instances simultaneously to create various test environments:
 
-- **Instance 1**: DEV role (for real H/W device)
+- **Instance 1**: MCC role (simulation)
 - **Instance 2**: FCC role (simulation)
 - **Instance 3**: GCS role (simulation)
 
