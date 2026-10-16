@@ -78,7 +78,7 @@ class _FieldEditorState extends State<FieldEditor> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return DropdownButtonFormField<int>(
-      value: enumDef.entries.any((e) => e.value == currentValue)
+      initialValue: enumDef.entries.any((e) => e.value == currentValue)
           ? currentValue
           : null,
       dropdownColor: isDark ? AppTheme.darkDropdownColor : null,
