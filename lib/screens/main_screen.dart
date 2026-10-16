@@ -553,11 +553,11 @@ class SettingsScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               // About
-              const Card(
+              Card(
                 child: ListTile(
-                  leading: Icon(Icons.info),
-                  title: Text('MAV-Flow'),
-                  subtitle: Text('MAVLink Message Transceiver\nVersion 1.0.0'),
+                  leading: const Icon(Icons.info),
+                  title: const Text('MAV-Flow'),
+                  subtitle: Text('MAVLink Message Transceiver\nVersion $appVersion'),
                 ),
               ),
             ],
